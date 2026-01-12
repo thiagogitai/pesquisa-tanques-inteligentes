@@ -58,9 +58,9 @@
 
 ## Implementação de Geolocalização
 
-- [ ] Instalar jsonwebtoken
-- [ ] Capturar localização GPS do vendedor
-- [ ] Armazenar latitude/longitude no banco
+- [x] Instalar jsonwebtoken
+- [x] Capturar localização GPS do vendedor
+- [x] Armazenar latitude/longitude no banco
 - [ ] Criar painel de admin com mapa
 - [ ] Exibir marcadores de localização no mapa
 - [ ] Mostrar coordenadas nos relatórios

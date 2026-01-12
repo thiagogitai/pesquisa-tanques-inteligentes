@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pesquisa Tanques Inteligentes</title>
+  <title>Pesquisa Tanques - Evermax</title>
   <style>
     * {
       margin: 0;
@@ -12,169 +12,233 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #F5F7FA;
+      color: #1a1a1a;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0066CC 0%, #004499 100%);
+      color: white;
       padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header-left img {
+      height: 35px;
+      width: auto;
+    }
+
+    .header-title h1 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .header-title p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-info {
+      text-align: right;
+      font-size: 13px;
+    }
+
+    .user-info .email {
+      font-weight: 600;
+    }
+
+    .user-info .role {
+      font-size: 11px;
+      opacity: 0.8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-logout {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-logout:hover {
+      background: rgba(255, 255, 255, 0.3);
     }
 
     .container {
       max-width: 1200px;
       margin: 0 auto;
-    }
-
-    header {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    header h1 {
-      color: #333;
-      font-size: 28px;
-      margin-bottom: 5px;
-    }
-
-    header p {
-      color: #666;
-      font-size: 14px;
+      padding: 30px 20px;
     }
 
     .tabs {
       display: flex;
       gap: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
       background: white;
-      padding: 10px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding: 12px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
     .tab-btn {
-      padding: 10px 20px;
-      border: none;
-      background: #f0f0f0;
-      color: #333;
+      padding: 12px 24px;
+      border: 2px solid transparent;
+      background: #F0F0F0;
+      color: #666;
       cursor: pointer;
-      border-radius: 4px;
+      border-radius: 8px;
       font-size: 14px;
-      font-weight: 500;
+      font-weight: 600;
       transition: all 0.3s ease;
     }
 
-    .tab-btn.active {
-      background: #667eea;
-      color: white;
+    .tab-btn:hover {
+      background: #E8E8E8;
     }
 
-    .tab-btn:hover {
-      background: #667eea;
+    .tab-btn.active {
+      background: linear-gradient(135deg, #0066CC 0%, #004499 100%);
       color: white;
+      border-color: #0066CC;
     }
 
     .tab-content {
       display: none;
       background: white;
       padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     }
 
     .tab-content.active {
       display: block;
     }
 
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      color: #333;
-      font-weight: 500;
-      font-size: 14px;
-    }
-
-    input[type="text"],
-    input[type="tel"],
-    input[type="number"],
-    select,
-    textarea {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-      font-family: inherit;
-      transition: border-color 0.3s ease;
-    }
-
-    input[type="text"]:focus,
-    input[type="tel"]:focus,
-    input[type="number"]:focus,
-    select:focus,
-    textarea:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 20px;
+      margin-bottom: 20px;
     }
 
     .form-row.full {
       grid-template-columns: 1fr;
     }
 
-    button {
-      padding: 12px 24px;
-      background: #667eea;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
+    .form-group {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #1a1a1a;
       font-weight: 600;
-      transition: background 0.3s ease;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    button:hover {
-      background: #5568d3;
+    input[type="text"],
+    input[type="tel"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #E0E0E0;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.3s ease;
+      background: #FAFAFA;
     }
 
-    button.secondary {
-      background: #f0f0f0;
-      color: #333;
-    }
-
-    button.secondary:hover {
-      background: #e0e0e0;
-    }
-
-    button.danger {
-      background: #ef4444;
-    }
-
-    button.danger:hover {
-      background: #dc2626;
+    input[type="text"]:focus,
+    input[type="tel"]:focus,
+    input[type="number"]:focus,
+    select:focus {
+      outline: none;
+      border-color: #0066CC;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
     }
 
     .button-group {
       display: flex;
-      gap: 10px;
-      margin-top: 20px;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0066CC 0%, #004499 100%);
+      color: white;
+      flex: 1;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 102, 204, 0.3);
+    }
+
+    .btn-secondary {
+      background: #F0F0F0;
+      color: #1a1a1a;
+      flex: 1;
+    }
+
+    .btn-secondary:hover {
+      background: #E0E0E0;
     }
 
     .cliente-card {
-      background: #f9f9f9;
-      border: 1px solid #ddd;
-      border-radius: 8px;
+      background: #F9FAFB;
+      border: 2px solid #E0E0E0;
+      border-radius: 10px;
       padding: 20px;
       margin-bottom: 15px;
       cursor: pointer;
@@ -182,12 +246,13 @@
     }
 
     .cliente-card:hover {
-      border-color: #667eea;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+      border-color: #0066CC;
+      box-shadow: 0 8px 20px rgba(0, 102, 204, 0.15);
+      transform: translateY(-2px);
     }
 
     .cliente-card h3 {
-      color: #333;
+      color: #0066CC;
       margin-bottom: 8px;
       font-size: 16px;
     }
@@ -198,109 +263,52 @@
       margin-bottom: 5px;
     }
 
-    .cliente-card .badge {
+    .cliente-badge {
       display: inline-block;
-      background: #667eea;
+      background: linear-gradient(135deg, #0066CC 0%, #004499 100%);
       color: white;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
       margin-top: 10px;
-    }
-
-    .tanque-section {
-      background: #f9f9f9;
-      border: 2px dashed #ddd;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .tanque-section h3 {
-      color: #333;
-      margin-bottom: 15px;
-      font-size: 16px;
-      border-bottom: 2px solid #667eea;
-      padding-bottom: 10px;
-    }
-
-    .photo-upload {
-      margin-bottom: 20px;
-    }
-
-    .photo-preview {
-      width: 100%;
-      max-width: 300px;
-      height: 300px;
-      background: #f0f0f0;
-      border: 2px dashed #ddd;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 10px;
-      overflow: hidden;
-    }
-
-    .photo-preview img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .photo-preview.empty {
-      color: #999;
-      font-size: 14px;
-    }
-
-    .checkbox-group {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-
-    .checkbox-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .checkbox-item input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      cursor: pointer;
-    }
-
-    .checkbox-item label {
-      margin: 0;
-      cursor: pointer;
-      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .message {
-      padding: 15px;
-      border-radius: 4px;
+      padding: 15px 20px;
+      border-radius: 8px;
       margin-bottom: 20px;
       font-size: 14px;
+      display: none;
+    }
+
+    .message.show {
+      display: block;
     }
 
     .message.success {
-      background: #d1fae5;
-      color: #065f46;
-      border: 1px solid #a7f3d0;
+      background: #D1FAE5;
+      color: #065F46;
+      border: 1px solid #A7F3D0;
     }
 
     .message.error {
-      background: #fee2e2;
-      color: #7f1d1d;
-      border: 1px solid #fecaca;
+      background: #FEE2E2;
+      color: #7F1D1D;
+      border: 1px solid #FECACA;
     }
 
-    .message.info {
-      background: #dbeafe;
-      color: #1e3a8a;
-      border: 1px solid #bfdbfe;
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
     }
 
     .loading {
@@ -310,8 +318,8 @@
     }
 
     .spinner {
-      border: 4px solid #f0f0f0;
-      border-top: 4px solid #667eea;
+      border: 4px solid #F0F0F0;
+      border-top: 4px solid #0066CC;
       border-radius: 50%;
       width: 40px;
       height: 40px;
@@ -329,53 +337,60 @@
       overflow-y: auto;
     }
 
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: #999;
-    }
-
-    .empty-state svg {
-      width: 80px;
-      height: 80px;
-      margin-bottom: 20px;
-      opacity: 0.5;
-    }
-
     @media (max-width: 768px) {
       .form-row {
         grid-template-columns: 1fr;
       }
 
-      .checkbox-group {
-        grid-template-columns: 1fr;
+      .header-content {
+        flex-direction: column;
+        gap: 15px;
       }
 
-      header h1 {
-        font-size: 20px;
+      .header-right {
+        width: 100%;
+        justify-content: space-between;
       }
 
       .tabs {
         flex-wrap: wrap;
       }
 
-      .tab-content {
-        padding: 20px;
+      .button-group {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>📋 Pesquisa Tanques Inteligentes</h1>
-      <p>Sistema de cadastro e acompanhamento de clientes com tanques de troca inteligente</p>
-    </header>
+  <header>
+    <div class="header-content">
+      <div class="header-left">
+        <img src="/logo-evermax.png" alt="Evermax">
+        <div class="header-title">
+          <h1>Pesquisa Tanques</h1>
+          <p>Sistema de Gestão Evermax</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="user-info">
+          <div class="email" id="userEmail">-</div>
+          <div class="role" id="userRole">-</div>
+        </div>
+        <button class="btn-logout" onclick="logout()">Sair</button>
+      </div>
+    </div>
+  </header>
 
+  <div class="container">
     <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('novo-cliente')">Novo Cliente</button>
-      <button class="tab-btn" onclick="switchTab('listar-clientes')">Listar Clientes</button>
-      <button class="tab-btn" onclick="switchTab('relatorios')">Relatórios</button>
+      <button class="tab-btn active" onclick="switchTab('novo-cliente', this)">📝 Novo Cliente</button>
+      <button class="tab-btn" onclick="switchTab('listar-clientes', this)">📋 Listar Clientes</button>
+      <button class="tab-btn" onclick="switchTab('relatorios', this)">📊 Relatórios</button>
     </div>
 
     <!-- Tab: Novo Cliente -->
@@ -406,7 +421,9 @@
           </div>
         </div>
 
-        <button type="submit">Próximo: Cadastrar Tanques</button>
+        <div class="button-group">
+          <button type="submit" class="btn-primary">✓ Próximo: Cadastrar Tanques</button>
+        </div>
       </form>
     </div>
 
@@ -427,8 +444,21 @@
   <script>
     const API_BASE = '/api';
 
-    // Trocar abas
-    function switchTab(tabName) {
+    // Verificar autenticação
+    window.addEventListener('load', () => {
+      const token = localStorage.getItem('token');
+      const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+
+      if (!token) {
+        window.location.href = '/login-email.html';
+        return;
+      }
+
+      document.getElementById('userEmail').textContent = usuario.email || '-';
+      document.getElementById('userRole').textContent = usuario.role === 'admin' ? 'Administrador' : 'Vendedor';
+    });
+
+    function switchTab(tabName, button) {
       document.querySelectorAll('.tab-content').forEach(tab => {
         tab.classList.remove('active');
       });
@@ -437,7 +467,7 @@
       });
 
       document.getElementById(tabName).classList.add('active');
-      event.target.classList.add('active');
+      button.classList.add('active');
 
       if (tabName === 'listar-clientes') {
         carregarClientes();
@@ -446,19 +476,18 @@
       }
     }
 
-    // Mostrar mensagem
     function showMessage(elementId, message, type = 'info') {
       const element = document.getElementById(elementId);
-      element.innerHTML = `<div class="message ${type}">${message}</div>`;
+      element.innerHTML = `<div class="message show ${type}">${message}</div>`;
       setTimeout(() => {
         element.innerHTML = '';
       }, 5000);
     }
 
-    // Criar novo cliente
     document.getElementById('formNovoCliente').addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      const token = localStorage.getItem('token');
       const dados = {
         cod_cliente: document.getElementById('codCliente').value,
         nome_contato: document.getElementById('nomeContato').value,
@@ -469,83 +498,78 @@
       try {
         const response = await fetch(`${API_BASE}/clientes`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify(dados)
         });
 
         if (!response.ok) throw new Error('Erro ao criar cliente');
 
         const cliente = await response.json();
-        showMessage('novoClienteMessage', 'Cliente criado com sucesso! Redirecionando...', 'success');
+        showMessage('novoClienteMessage', '✓ Cliente criado com sucesso! Redirecionando...', 'success');
         
         setTimeout(() => {
-          window.location.href = `/formulario-tanques.html?cliente_id=${cliente.id}&quantidade=${dados.quantidade_tanques}`;
+          window.location.href = `/formulario-tanques-geo.html?cliente_id=${cliente.id}&quantidade=${dados.quantidade_tanques}`;
         }, 1500);
       } catch (err) {
-        showMessage('novoClienteMessage', `Erro: ${err.message}`, 'error');
+        showMessage('novoClienteMessage', `✗ Erro: ${err.message}`, 'error');
       }
     });
 
-    // Carregar clientes
     async function carregarClientes() {
       const container = document.getElementById('listaClientes');
+      const token = localStorage.getItem('token');
+      const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+
       container.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
 
       try {
-        const response = await fetch(`${API_BASE}/clientes`);
+        const response = await fetch(`${API_BASE}/clientes`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
         if (!response.ok) throw new Error('Erro ao carregar clientes');
 
         const clientes = await response.json();
 
         if (clientes.length === 0) {
-          container.innerHTML = '<div class="empty-state"><p>Nenhum cliente cadastrado ainda</p></div>';
+          container.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><p>Nenhum cliente cadastrado ainda</p></div>';
           return;
         }
 
         container.innerHTML = clientes.map(cliente => `
-          <div class="cliente-card" onclick="verDetalhesCliente(${cliente.id})">
+          <div class="cliente-card" onclick="window.location.href='/detalhes-cliente.html?id=${cliente.id}'">
             <h3>${cliente.nome_contato}</h3>
             <p><strong>Código:</strong> ${cliente.cod_cliente}</p>
             <p><strong>Celular:</strong> ${cliente.celular_ddd}</p>
-            <span class="badge">${cliente.quantidade_tanques} tanque(s)</span>
+            <p><strong>Tanques:</strong> ${cliente.quantidade_tanques}</p>
+            <div class="cliente-badge">Ver Detalhes →</div>
           </div>
         `).join('');
       } catch (err) {
-        container.innerHTML = `<div class="message error">Erro ao carregar clientes: ${err.message}</div>`;
+        showMessage('listarClientesMessage', `✗ Erro: ${err.message}`, 'error');
       }
     }
 
-    // Ver detalhes do cliente
-    function verDetalhesCliente(clienteId) {
-      window.location.href = `/detalhes-cliente.html?id=${clienteId}`;
-    }
-
-    // Carregar relatórios
     async function carregarRelatorios() {
       const container = document.getElementById('relatoriosContent');
-      container.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando relatórios...</div>';
+      const token = localStorage.getItem('token');
+      const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
 
-      try {
-        const response = await fetch(`${API_BASE}/clientes`);
-        if (!response.ok) throw new Error('Erro ao carregar dados');
-
-        const clientes = await response.json();
-        const totalClientes = clientes.length;
-        const totalTanques = clientes.reduce((sum, c) => sum + c.quantidade_tanques, 0);
-
-        container.innerHTML = `
-          <div class="form-row full">
-            <div class="cliente-card">
-              <h3>📊 Estatísticas Gerais</h3>
-              <p><strong>Total de Clientes:</strong> ${totalClientes}</p>
-              <p><strong>Total de Tanques:</strong> ${totalTanques}</p>
-              <p><strong>Média de Tanques por Cliente:</strong> ${(totalTanques / totalClientes || 0).toFixed(2)}</p>
-            </div>
-          </div>
-        `;
-      } catch (err) {
-        container.innerHTML = `<div class="message error">Erro ao carregar relatórios: ${err.message}</div>`;
+      if (usuario.role !== 'admin') {
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon">🔒</div><p>Apenas administradores podem acessar relatórios</p></div>';
+        return;
       }
+
+      container.innerHTML = '<div class="empty-state"><p>Relatórios em desenvolvimento...</p></div>';
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('usuario');
+      window.location.href = '/login-email.html';
     }
   </script>
 </body>

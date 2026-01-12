@@ -19,7 +19,7 @@
     }
 
     header {
-      background: linear-gradient(135deg, #FF6600 0%, #FF8533 100%);
+      background: linear-gradient(135deg, #0066CC 0%, #004499 100%);
       color: white;
       padding: 20px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -101,6 +101,10 @@
       color: #065f46;
     }
 
+    .geo-status.success::before {
+      content: '✓ ';
+    }
+
     .geo-status.error {
       background: #fee2e2;
       color: #7f1d1d;
@@ -124,7 +128,7 @@
       background: #f9f9f9;
       padding: 12px;
       border-radius: 6px;
-      border-left: 4px solid #FF6600;
+      border-left: 4px solid #0066CC;
     }
 
     .coord-label {
@@ -143,7 +147,7 @@
     }
 
     .btn-geo {
-      background: linear-gradient(135deg, #FF6600 0%, #FF8533 100%);
+      background: linear-gradient(135deg, #0066CC 0%, #004499 100%);
       color: white;
       border: none;
       padding: 12px 20px;
@@ -159,7 +163,7 @@
 
     .btn-geo:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(255, 102, 0, 0.3);
+      box-shadow: 0 8px 20px rgba(0, 102, 204, 0.3);
     }
 
     .btn-geo:disabled {
@@ -186,7 +190,7 @@
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #FF6600 0%, #FF8533 100%);
+      background: linear-gradient(90deg, #0066CC 0%, #004499 100%);
       transition: width 0.3s ease;
     }
 
@@ -199,7 +203,7 @@
     }
 
     .tanque-header {
-      background: linear-gradient(135deg, #FF6600 0%, #FF8533 100%);
+      background: linear-gradient(135deg, #0066CC 0%, #004499 100%);
       color: white;
       padding: 20px;
       display: flex;
@@ -260,8 +264,8 @@
     }
 
     .item-section {
-      background: #f9f9f9;
-      border: 2px solid #f0f0f0;
+      background: #F0F7FF;
+      border: 2px solid #E0E8FF;
       border-radius: 10px;
       padding: 20px;
       margin-bottom: 20px;
@@ -272,13 +276,18 @@
       display: none;
     }
 
+    .item-section:hover {
+      border-color: #0066CC;
+      background: #F8FAFF;
+    }
+
     .item-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 15px;
       padding-bottom: 15px;
-      border-bottom: 2px solid #e0e0e0;
+      border-bottom: 2px solid #E0E8FF;
     }
 
     .item-title {
@@ -307,7 +316,7 @@
       width: 18px;
       height: 18px;
       cursor: pointer;
-      accent-color: #FF6600;
+      accent-color: #0066CC;
     }
 
     .radio-option label {
@@ -337,7 +346,7 @@
       width: 100%;
       height: 200px;
       background: white;
-      border: 2px dashed #FF6600;
+      border: 2px dashed #0066CC;
       border-radius: 8px;
       display: flex;
       align-items: center;
@@ -348,8 +357,8 @@
     }
 
     .photo-preview:hover {
-      background: #fff9f5;
-      border-color: #FF8533;
+      background: #F0F7FF;
+      border-color: #004499;
     }
 
     .photo-preview img {
@@ -359,7 +368,7 @@
     }
 
     .photo-preview.empty {
-      color: #FF6600;
+      color: #0066CC;
       font-size: 14px;
       text-align: center;
       flex-direction: column;
@@ -388,14 +397,14 @@
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #FF6600 0%, #FF8533 100%);
+      background: linear-gradient(135deg, #0066CC 0%, #004499 100%);
       color: white;
       flex: 1;
     }
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(255, 102, 0, 0.3);
+      box-shadow: 0 8px 20px rgba(0, 102, 204, 0.3);
     }
 
     .btn-secondary {
@@ -433,8 +442,8 @@
     }
 
     .dependent-badge {
-      background: #FFE5CC;
-      color: #FF6600;
+      background: #E0E8FF;
+      color: #0066CC;
       padding: 4px 10px;
       border-radius: 4px;
       font-size: 11px;

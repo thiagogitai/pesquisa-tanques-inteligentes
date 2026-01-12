@@ -13,7 +13,7 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #FF6600 0%, #FF8533 100%);
+      background: linear-gradient(135deg, #0066CC 0%, #004499 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -21,92 +21,48 @@
       padding: 20px;
     }
 
+    .login-wrapper {
+      width: 100%;
+      max-width: 450px;
+    }
+
     .login-container {
       background: white;
       border-radius: 16px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      width: 100%;
-      max-width: 400px;
-      padding: 40px;
+      overflow: hidden;
+    }
+
+    .login-header {
+      background: linear-gradient(135deg, #0066CC 0%, #004499 100%);
+      padding: 40px 30px;
+      text-align: center;
+      color: white;
     }
 
     .logo-section {
-      text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 20px;
     }
 
     .logo-section img {
       height: 50px;
       width: auto;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
 
     .logo-section h1 {
-      font-size: 24px;
-      color: #333;
-      margin-bottom: 8px;
+      font-size: 28px;
       font-weight: 700;
+      margin-bottom: 5px;
     }
 
     .logo-section p {
-      color: #666;
       font-size: 14px;
+      opacity: 0.9;
     }
 
-    .form-group {
-      margin-bottom: 24px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      color: #333;
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    input[type="email"] {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      font-size: 14px;
-      font-family: inherit;
-      transition: all 0.3s ease;
-    }
-
-    input[type="email"]:focus {
-      outline: none;
-      border-color: #FF6600;
-      box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
-    }
-
-    .btn-login {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, #FF6600 0%, #FF8533 100%);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .btn-login:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(255, 102, 0, 0.3);
-    }
-
-    .btn-login:active {
-      transform: translateY(0);
-    }
-
-    .btn-login:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-      transform: none;
+    .login-body {
+      padding: 40px 30px;
     }
 
     .message {
@@ -122,31 +78,111 @@
     }
 
     .message.error {
-      background: #fee2e2;
-      color: #7f1d1d;
-      border: 1px solid #fecaca;
+      background: #FEE2E2;
+      color: #7F1D1D;
+      border: 1px solid #FECACA;
     }
 
-    .message.info {
-      background: #dbeafe;
-      color: #1e40af;
-      border: 1px solid #bfdbfe;
+    .message.success {
+      background: #D1FAE5;
+      color: #065F46;
+      border: 1px solid #A7F3D0;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #1a1a1a;
+      font-weight: 600;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input[type="email"] {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #E0E0E0;
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: inherit;
+      transition: all 0.3s ease;
+      background: #FAFAFA;
+    }
+
+    input[type="email"]:focus {
+      outline: none;
+      border-color: #0066CC;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #0066CC 0%, #004499 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-login:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 102, 204, 0.3);
+    }
+
+    .btn-login:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .loading {
+      display: none;
+      width: 16px;
+      height: 16px;
+    }
+
+    .spinner {
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top: 2px solid white;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     .info-box {
-      background: #f9f9f9;
-      border-left: 4px solid #FF6600;
+      background: #F0F7FF;
+      border-left: 4px solid #0066CC;
       padding: 16px;
-      border-radius: 6px;
+      border-radius: 8px;
       margin-top: 24px;
       font-size: 13px;
-      color: #666;
+      color: #1a1a1a;
     }
 
     .info-box strong {
-      color: #333;
+      color: #0066CC;
       display: block;
       margin-bottom: 8px;
+      font-weight: 600;
     }
 
     .info-box ul {
@@ -155,106 +191,112 @@
     }
 
     .info-box li {
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+      line-height: 1.5;
     }
 
-    .loading {
-      display: none;
+    .divider {
+      height: 1px;
+      background: #E0E0E0;
+      margin: 24px 0;
+    }
+
+    .footer-text {
       text-align: center;
-    }
-
-    .spinner {
-      border: 3px solid #f0f0f0;
-      border-top: 3px solid #FF6600;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 10px;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      font-size: 12px;
+      color: #999;
+      margin-top: 20px;
     }
 
     @media (max-width: 480px) {
-      .login-container {
+      .login-header {
+        padding: 30px 20px;
+      }
+
+      .login-body {
         padding: 30px 20px;
       }
 
       .logo-section h1 {
-        font-size: 20px;
+        font-size: 24px;
+      }
+
+      .logo-section img {
+        height: 40px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <div class="logo-section">
-      <img src="/logo-evermax.png" alt="Evermax">
-      <h1>Pesquisa Tanques</h1>
-      <p>Sistema de Gestão Evermax</p>
-    </div>
-
-    <div id="message" class="message"></div>
-
-    <form id="loginForm" onsubmit="handleLogin(event)">
-      <div class="form-group">
-        <label for="email">Seu Email</label>
-        <input 
-          type="email" 
-          id="email" 
-          name="email" 
-          placeholder="seu@email.com" 
-          required
-          autocomplete="email"
-        >
+  <div class="login-wrapper">
+    <div class="login-container">
+      <div class="login-header">
+        <div class="logo-section">
+          <img src="/logo-evermax.png" alt="Evermax">
+          <h1>Pesquisa Tanques</h1>
+          <p>Sistema de Gestão Evermax</p>
+        </div>
       </div>
 
-      <button type="submit" class="btn-login" id="btnLogin">
-        Entrar
-      </button>
-    </form>
+      <div class="login-body">
+        <div id="message" class="message"></div>
 
-    <div class="info-box">
-      <strong>📧 Como funciona:</strong>
-      <ul>
-        <li>Digite seu email corporativo</li>
-        <li>Clique em "Entrar"</li>
-        <li>Acesso imediato ao formulário</li>
-      </ul>
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="email">Seu Email</label>
+            <input 
+              type="email" 
+              id="email" 
+              placeholder="seu@email.com" 
+              required
+              autocomplete="email"
+            >
+          </div>
+
+          <button type="submit" class="btn-login" id="btnLogin">
+            <span>Entrar</span>
+            <div class="loading" id="loadingSpinner">
+              <div class="spinner"></div>
+            </div>
+          </button>
+        </form>
+
+        <div class="divider"></div>
+
+        <div class="info-box">
+          <strong>ℹ️ Como funciona:</strong>
+          <ul>
+            <li>✓ Digite seu email corporativo</li>
+            <li>✓ Clique em "Entrar"</li>
+            <li>✓ Acesso imediato ao formulário</li>
+          </ul>
+        </div>
+
+        <div class="footer-text">
+          Desenvolvido pela Evermax • Pesquisa de Tanques Inteligentes
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
     const API_BASE = '/api';
 
-    function showMessage(message, type = 'error') {
-      const element = document.getElementById('message');
-      element.textContent = message;
-      element.className = `message show ${type}`;
-      
-      if (type === 'error') {
-        setTimeout(() => {
-          element.classList.remove('show');
-        }, 5000);
-      }
-    }
-
-    async function handleLogin(event) {
-      event.preventDefault();
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
 
       const email = document.getElementById('email').value.trim();
       const btnLogin = document.getElementById('btnLogin');
+      const loadingSpinner = document.getElementById('loadingSpinner');
+      const messageDiv = document.getElementById('message');
 
       if (!email) {
-        showMessage('Por favor, digite seu email', 'error');
+        showMessage('Por favor, digite um email válido', 'error');
         return;
       }
 
       btnLogin.disabled = true;
-      btnLogin.textContent = 'Entrando...';
+      loadingSpinner.style.display = 'flex';
 
       try {
         const response = await fetch(`${API_BASE}/auth/login`, {
@@ -268,41 +310,39 @@
         if (!response.ok) {
           showMessage(data.erro || 'Erro ao fazer login', 'error');
           btnLogin.disabled = false;
-          btnLogin.textContent = 'Entrar';
+          loadingSpinner.style.display = 'none';
           return;
         }
 
-        // Salvar token
+        // Salvar token no localStorage
         localStorage.setItem('token', data.token);
         localStorage.setItem('usuario', JSON.stringify(data.usuario));
 
-        showMessage('✓ Login realizado com sucesso!', 'info');
+        showMessage('✓ Login realizado! Redirecionando...', 'success');
 
-        // Redirecionar para dashboard
+        // Redirecionar após 1 segundo
         setTimeout(() => {
-          if (data.usuario.role === 'admin') {
-            window.location.href = '/admin-dashboard.html';
-          } else {
-            window.location.href = '/';
-          }
+          window.location.href = '/';
         }, 1000);
       } catch (err) {
-        showMessage(`Erro: ${err.message}`, 'error');
+        console.error('Erro:', err);
+        showMessage('Erro ao conectar ao servidor', 'error');
         btnLogin.disabled = false;
-        btnLogin.textContent = 'Entrar';
+        loadingSpinner.style.display = 'none';
       }
+    });
+
+    function showMessage(message, type = 'info') {
+      const messageDiv = document.getElementById('message');
+      messageDiv.textContent = message;
+      messageDiv.className = `message show ${type}`;
     }
 
     // Verificar se já está logado
     window.addEventListener('load', () => {
       const token = localStorage.getItem('token');
       if (token) {
-        const usuario = JSON.parse(localStorage.getItem('usuario'));
-        if (usuario.role === 'admin') {
-          window.location.href = '/admin-dashboard.html';
-        } else {
-          window.location.href = '/';
-        }
+        window.location.href = '/';
       }
     });
   </script>
