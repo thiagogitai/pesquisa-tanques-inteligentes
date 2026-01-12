@@ -3,14 +3,10 @@ const jwt = require('jsonwebtoken');
 
 const SECRET_KEY = process.env.JWT_SECRET || 'sua-chave-secreta-super-segura';
 
-// Vendedores e admins pré-configurados
-const USUARIOS = {
-  'admin@evermax.com.br': { role: 'admin', nome: 'Administrador' },
-  'vendedor1@evermax.com.br': { role: 'vendedor', nome: 'Vendedor 1' },
-  'vendedor2@evermax.com.br': { role: 'vendedor', nome: 'Vendedor 2' },
-};
+// Email do admin (pode ser alterado conforme necessário)
+const ADMIN_EMAIL = 'admin@evermax.com.br';
 
-// Login com email (sem senha)
+// Login com email (sem senha) - aceita qualquer email @evermax.com.br
 exports.login = (req, res) => {
   try {
     const { email } = req.body;
@@ -20,30 +16,34 @@ exports.login = (req, res) => {
     }
 
     const emailLower = email.toLowerCase().trim();
-    const usuario = USUARIOS[emailLower];
 
-    if (!usuario) {
+    // Validar domínio @evermax.com.br
+    if (!emailLower.endsWith('@evermax.com.br')) {
       return res.status(401).json({ 
-        erro: 'Email não autorizado. Contate o administrador.' 
+        erro: 'Apenas emails @evermax.com.br são permitidos' 
       });
     }
+
+    // Determinar role baseado no email
+    const role = emailLower === ADMIN_EMAIL ? 'admin' : 'vendedor';
+    const nome = emailLower.split('@')[0].replace(/[._-]/g, ' ').toUpperCase();
 
     // Gerar token JWT
     const token = jwt.sign(
       { 
         email: emailLower, 
-        role: usuario.role,
-        nome: usuario.nome
+        role: role,
+        nome: nome
       },
       SECRET_KEY,
       { expiresIn: '7d' }
     );
 
-    // Salvar/atualizar usuário no banco
+    // Salvar/atualizar usuário no banco (criar se não existir)
     db.run(
       `INSERT OR REPLACE INTO usuarios (email, role, nome, ultimo_acesso) 
        VALUES (?, ?, ?, datetime('now'))`,
-      [emailLower, usuario.role, usuario.nome],
+      [emailLower, role, nome],
       (err) => {
         if (err) console.error('Erro ao salvar usuário:', err);
       }
@@ -54,8 +54,8 @@ exports.login = (req, res) => {
       token,
       usuario: {
         email: emailLower,
-        role: usuario.role,
-        nome: usuario.nome
+        role: role,
+        nome: nome
       }
     });
   } catch (err) {

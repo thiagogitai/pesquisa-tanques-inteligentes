@@ -133,3 +133,11 @@ A aplicação está completa, testada e pronta para os vendedores utilizarem em 
 - [x] Implementar função de geração de CSV
 - [x] Exportar dados filtrados ou todos
 - [x] Testar exportação com dados reais
+
+
+## 🔑 Autenticação Flexível
+
+- [x] Permitir qualquer email @evermax.com.br
+- [x] Criar usuário automaticamente no primeiro login
+- [x] Detectar admin por email específíco
+- [x] Testar com novos emails
