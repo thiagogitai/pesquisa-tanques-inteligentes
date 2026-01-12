@@ -36,6 +36,8 @@ function initializeDatabase() {
         nome_contato TEXT NOT NULL,
         celular_ddd TEXT NOT NULL,
         quantidade_tanques INTEGER NOT NULL,
+        latitude REAL,
+        longitude REAL,
         data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
         data_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
@@ -51,6 +53,8 @@ function initializeDatabase() {
         numero_tanque INTEGER NOT NULL,
         capacidade_litros INTEGER,
         condicao_plastico TEXT,
+        latitude REAL,
+        longitude REAL,
         data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE CASCADE
       )

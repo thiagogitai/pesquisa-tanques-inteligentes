@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de Tanques - Evermax</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    header {
+      background: linear-gradient(135deg, #FF6600 0%, #FF8533 100%);
+      color: white;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    header .header-content {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    header .logo img {
+      height: 35px;
+      width: auto;
+    }
+
+    header h1 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    header .cliente-info {
+      text-align: right;
+      font-size: 13px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .geo-section {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .geo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .geo-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .geo-status {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .geo-status.loading {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .geo-status.success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .geo-status.error {
+      background: #fee2e2;
+      color: #7f1d1d;
+    }
+
+    .geo-map {
+      width: 100%;
+      height: 300px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border: 2px solid #e0e0e0;
+    }
+
+    .geo-coords {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .coord-item {
+      background: #f9f9f9;
+      padding: 12px;
+      border-radius: 6px;
+      border-left: 4px solid #FF6600;
+    }
+
+    .coord-label {
+      font-size: 12px;
+      color: #666;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .coord-value {
+      font-size: 14px;
+      color: #333;
+      font-weight: 600;
+      font-family: 'Courier New', monospace;
+    }
+
+    .btn-geo {
+      background: linear-gradient(135deg, #FF6600 0%, #FF8533 100%);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-geo:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 102, 0, 0.3);
+    }
+
+    .btn-geo:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .progress-section {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: #e0e0e0;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #FF6600 0%, #FF8533 100%);
+      transition: width 0.3s ease;
+    }
+
+    .tanque-card {
+      background: white;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .tanque-header {
+      background: linear-gradient(135deg, #FF6600 0%, #FF8533 100%);
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .tanque-header h2 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .tanque-content {
+      padding: 25px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    .form-row.full {
+      grid-template-columns: 1fr;
+    }
+
+    .form-group {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #FF6600;
+      box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
+    }
+
+    .item-section {
+      background: #f9f9f9;
+      border: 2px solid #f0f0f0;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .item-section.hidden {
+      display: none;
+    }
+
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .item-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sim-nao-group {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .radio-option input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #FF6600;
+    }
+
+    .radio-option label {
+      margin: 0;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 13px;
+      text-transform: none;
+      letter-spacing: normal;
+    }
+
+    .photo-upload {
+      margin-top: 15px;
+    }
+
+    .photo-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #666;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .photo-preview {
+      width: 100%;
+      height: 200px;
+      background: white;
+      border: 2px dashed #FF6600;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .photo-preview:hover {
+      background: #fff9f5;
+      border-color: #FF8533;
+    }
+
+    .photo-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-preview.empty {
+      color: #FF6600;
+      font-size: 14px;
+      text-align: center;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+      justify-content: space-between;
+    }
+
+    button {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #FF6600 0%, #FF8533 100%);
+      color: white;
+      flex: 1;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 102, 0, 0.3);
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+      flex: 1;
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    .message {
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .message.error {
+      background: #fee2e2;
+      color: #7f1d1d;
+      border: 1px solid #fecaca;
+    }
+
+    .dependent-badge {
+      background: #FFE5CC;
+      color: #FF6600;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      .geo-coords {
+        grid-template-columns: 1fr;
+      }
+
+      .geo-map {
+        height: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">
+        <img src="/logo-evermax.png" alt="Evermax">
+        <h1>Cadastro de Tanques</h1>
+      </div>
+      <div class="cliente-info" id="clienteInfo">Carregando...</div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="progress-section">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <h3 style="font-size: 14px; color: #666; margin-bottom: 5px;">Progresso</h3>
+          <p id="progressText" style="font-size: 13px; color: #999;">Tanque 1 de 1</p>
+        </div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+      </div>
+    </div>
+
+    <!-- Seção de Geolocalização -->
+    <div class="geo-section">
+      <div class="geo-header">
+        <h3>📍 Localização do Cliente</h3>
+        <div class="geo-status loading" id="geoStatus">
+          <span>⏳ Capturando localização...</span>
+        </div>
+      </div>
+
+      <div id="geoMap" class="geo-map"></div>
+
+      <div class="geo-coords">
+        <div class="coord-item">
+          <div class="coord-label">Latitude</div>
+          <div class="coord-value" id="latValue">--</div>
+        </div>
+        <div class="coord-item">
+          <div class="coord-label">Longitude</div>
+          <div class="coord-value" id="lonValue">--</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <form id="formTanques"></form>
+
+    <div class="button-group">
+      <button type="button" class="btn-secondary" onclick="voltarParaClientes()">← Voltar</button>
+      <button type="submit" form="formTanques" class="btn-primary">✓ Salvar Tanques</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script>
+    const API_BASE = '/api';
+    let clienteId = null;
+    let quantidadeTanques = 0;
+    let mapa = null;
+    let marcador = null;
+    let localizacaoAtual = { latitude: null, longitude: null };
+    const itensData = {};
+
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    function inicializar() {
+      clienteId = getQueryParam('cliente_id');
+      quantidadeTanques = parseInt(getQueryParam('quantidade')) || 1;
+
+      if (!clienteId) {
+        window.location.href = '/';
+        return;
+      }
+
+      carregarDadosCliente();
+      inicializarMapa();
+      capturarLocalizacao();
+      gerarFormularioTanques();
+    }
+
+    function inicializarMapa() {
+      mapa = L.map('geoMap').setView([-23.5505, -46.6333], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+      }).addTo(mapa);
+    }
+
+    function capturarLocalizacao() {
+      if (!navigator.geolocation) {
+        atualizarStatusGeo('Geolocalização não suportada', 'error');
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          localizacaoAtual.latitude = position.coords.latitude;
+          localizacaoAtual.longitude = position.coords.longitude;
+
+          document.getElementById('latValue').textContent = 
+            localizacaoAtual.latitude.toFixed(6);
+          document.getElementById('lonValue').textContent = 
+            localizacaoAtual.longitude.toFixed(6);
+
+          mapa.setView([localizacaoAtual.latitude, localizacaoAtual.longitude], 15);
+
+          if (marcador) {
+            marcador.setLatLng([localizacaoAtual.latitude, localizacaoAtual.longitude]);
+          } else {
+            marcador = L.marker([localizacaoAtual.latitude, localizacaoAtual.longitude], {
+              icon: L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-ff6600.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+              })
+            }).addTo(mapa);
+            marcador.bindPopup('📍 Localização Atual');
+          }
+
+          atualizarStatusGeo('✓ Localização capturada', 'success');
+        },
+        (error) => {
+          console.error('Erro ao capturar localização:', error);
+          atualizarStatusGeo('Erro ao capturar localização', 'error');
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    }
+
+    function atualizarStatusGeo(mensagem, tipo) {
+      const status = document.getElementById('geoStatus');
+      status.textContent = mensagem;
+      status.className = `geo-status ${tipo}`;
+    }
+
+    async function carregarDadosCliente() {
+      try {
+        const response = await fetch(`${API_BASE}/clientes/${clienteId}`, {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        });
+        if (!response.ok) throw new Error('Cliente não encontrado');
+
+        const cliente = await response.json();
+        document.getElementById('clienteInfo').textContent = 
+          `${cliente.nome_contato} (${cliente.cod_cliente})`;
+      } catch (err) {
+        showMessage('Erro ao carregar dados do cliente', 'error');
+      }
+    }
+
+    function gerarFormularioTanques() {
+      const form = document.getElementById('formTanques');
+      form.innerHTML = '';
+
+      for (let i = 1; i <= quantidadeTanques; i++) {
+        form.innerHTML += `
+          <div class="tanque-card">
+            <div class="tanque-header">
+              <h2>📦 Tanque ${i}</h2>
+            </div>
+            <div class="tanque-content">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="capacidade-${i}">Capacidade do Tanque (Litros)</label>
+                  <select id="capacidade-${i}" name="capacidade-${i}" required>
+                    <option value="">Selecione...</option>
+                    <option value="400">400 Litros</option>
+                    <option value="1000">1000 Litros</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="condicao-${i}">Condição do Plástico</label>
+                  <select id="condicao-${i}" name="condicao-${i}" required>
+                    <option value="">Selecione...</option>
+                    <option value="excelente">Excelente</option>
+                    <option value="bom">Bom</option>
+                    <option value="regular">Regular</option>
+                    <option value="ruim">Ruim</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="item-section">
+                <div class="item-header">
+                  <div class="item-title">
+                    <span class="icon">⚙️</span>
+                    <span>Tem Propulsora?</span>
+                  </div>
+                  <div class="sim-nao-group">
+                    <div class="radio-option">
+                      <input type="radio" id="temPropulsora-sim-${i}" name="temPropulsora-${i}" value="sim" 
+                        onchange="toggleDependencia('propulsoraLacre-${i}', this.checked)">
+                      <label for="temPropulsora-sim-${i}">Sim</label>
+                    </div>
+                    <div class="radio-option">
+                      <input type="radio" id="temPropulsora-nao-${i}" name="temPropulsora-${i}" value="nao" 
+                        onchange="toggleDependencia('propulsoraLacre-${i}', false)">
+                      <label for="temPropulsora-nao-${i}">Não</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="photo-upload">
+                  <label class="photo-label">📸 Foto da Propulsora</label>
+                  <div class="photo-preview empty" id="preview-propulsora-${i}" onclick="triggerFileInput('propulsora-${i}')">
+                    <div class="camera-icon">📷</div>
+                    <div>Clique para tirar foto</div>
+                  </div>
+                  <input type="file" id="file-propulsora-${i}" class="file-input" accept="image/*" onchange="handlePhotoUpload('propulsora-${i}', ${i})">
+                </div>
+              </div>
+
+              <div class="item-section hidden" id="propulsoraLacre-${i}">
+                <div class="item-header">
+                  <div class="item-title">
+                    <span class="icon">🔒</span>
+                    <span>Propulsora possui Lacre?</span>
+                    <span class="dependent-badge">Dependente</span>
+                  </div>
+                  <div class="sim-nao-group">
+                    <div class="radio-option">
+                      <input type="radio" id="temPropulsoraLacre-sim-${i}" name="temPropulsoraLacre-${i}" value="sim">
+                      <label for="temPropulsoraLacre-sim-${i}">Sim</label>
+                    </div>
+                    <div class="radio-option">
+                      <input type="radio" id="temPropulsoraLacre-nao-${i}" name="temPropulsoraLacre-${i}" value="nao">
+                      <label for="temPropulsoraLacre-nao-${i}">Não</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="photo-upload">
+                  <label class="photo-label">📸 Foto do Lacre da Propulsora</label>
+                  <div class="photo-preview empty" id="preview-propulsora-lacre-${i}" onclick="triggerFileInput('propulsora-lacre-${i}')">
+                    <div class="camera-icon">📷</div>
+                    <div>Clique para tirar foto</div>
+                  </div>
+                  <input type="file" id="file-propulsora-lacre-${i}" class="file-input" accept="image/*" onchange="handlePhotoUpload('propulsora-lacre-${i}', ${i})">
+                </div>
+              </div>
+
+              <div class="item-section">
+                <div class="item-header">
+                  <div class="item-title">
+                    <span class="icon">🔧</span>
+                    <span>Tem Mangueira?</span>
+                  </div>
+                  <div class="sim-nao-group">
+                    <div class="radio-option">
+                      <input type="radio" id="temMangueira-sim-${i}" name="temMangueira-${i}" value="sim">
+                      <label for="temMangueira-sim-${i}">Sim</label>
+                    </div>
+                    <div class="radio-option">
+                      <input type="radio" id="temMangueira-nao-${i}" name="temMangueira-${i}" value="nao">
+                      <label for="temMangueira-nao-${i}">Não</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="photo-upload">
+                  <label class="photo-label">📸 Foto da Mangueira</label>
+                  <div class="photo-preview empty" id="preview-mangueira-${i}" onclick="triggerFileInput('mangueira-${i}')">
+                    <div class="camera-icon">📷</div>
+                    <div>Clique para tirar foto</div>
+                  </div>
+                  <input type="file" id="file-mangueira-${i}" class="file-input" accept="image/*" onchange="handlePhotoUpload('mangueira-${i}', ${i})">
+                </div>
+              </div>
+
+              <div class="item-section">
+                <div class="item-header">
+                  <div class="item-title">
+                    <span class="icon">🔫</span>
+                    <span>Tem Pistola de Abastecimento?</span>
+                  </div>
+                  <div class="sim-nao-group">
+                    <div class="radio-option">
+                      <input type="radio" id="temPistola-sim-${i}" name="temPistola-${i}" value="sim" 
+                        onchange="toggleDependencia('pistolaDigital-${i}', this.checked)">
+                      <label for="temPistola-sim-${i}">Sim</label>
+                    </div>
+                    <div class="radio-option">
+                      <input type="radio" id="temPistola-nao-${i}" name="temPistola-${i}" value="nao" 
+                        onchange="toggleDependencia('pistolaDigital-${i}', false)">
+                      <label for="temPistola-nao-${i}">Não</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="photo-upload">
+                  <label class="photo-label">📸 Foto da Pistola</label>
+                  <div class="photo-preview empty" id="preview-pistola-${i}" onclick="triggerFileInput('pistola-${i}')">
+                    <div class="camera-icon">📷</div>
+                    <div>Clique para tirar foto</div>
+                  </div>
+                  <input type="file" id="file-pistola-${i}" class="file-input" accept="image/*" onchange="handlePhotoUpload('pistola-${i}', ${i})">
+                </div>
+              </div>
+
+              <div class="item-section hidden" id="pistolaDigital-${i}">
+                <div class="item-header">
+                  <div class="item-title">
+                    <span class="icon">💻</span>
+                    <span>Digital da Pistola está Funcionando?</span>
+                    <span class="dependent-badge">Dependente</span>
+                  </div>
+                  <div class="sim-nao-group">
+                    <div class="radio-option">
+                      <input type="radio" id="temPistolaDigital-sim-${i}" name="temPistolaDigital-${i}" value="sim">
+                      <label for="temPistolaDigital-sim-${i}">Sim</label>
+                    </div>
+                    <div class="radio-option">
+                      <input type="radio" id="temPistolaDigital-nao-${i}" name="temPistolaDigital-${i}" value="nao">
+                      <label for="temPistolaDigital-nao-${i}">Não</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="photo-upload">
+                  <label class="photo-label">📸 Foto do Digital da Pistola</label>
+                  <div class="photo-preview empty" id="preview-pistola-digital-${i}" onclick="triggerFileInput('pistola-digital-${i}')">
+                    <div class="camera-icon">📷</div>
+                    <div>Clique para tirar foto</div>
+                  </div>
+                  <input type="file" id="file-pistola-digital-${i}" class="file-input" accept="image/*" onchange="handlePhotoUpload('pistola-digital-${i}', ${i})">
+                </div>
+              </div>
+
+              <div class="item-section">
+                <div class="item-header">
+                  <div class="item-title">
+                    <span class="icon">🛢️</span>
+                    <span>Tem Bacia de Contenção?</span>
+                  </div>
+                  <div class="sim-nao-group">
+                    <div class="radio-option">
+                      <input type="radio" id="temBacia-sim-${i}" name="temBacia-${i}" value="sim">
+                      <label for="temBacia-sim-${i}">Sim</label>
+                    </div>
+                    <div class="radio-option">
+                      <input type="radio" id="temBacia-nao-${i}" name="temBacia-${i}" value="nao">
+                      <label for="temBacia-nao-${i}">Não</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="photo-upload">
+                  <label class="photo-label">📸 Foto da Bacia de Contenção</label>
+                  <div class="photo-preview empty" id="preview-bacia-${i}" onclick="triggerFileInput('bacia-${i}')">
+                    <div class="camera-icon">📷</div>
+                    <div>Clique para tirar foto</div>
+                  </div>
+                  <input type="file" id="file-bacia-${i}" class="file-input" accept="image/*" onchange="handlePhotoUpload('bacia-${i}', ${i})">
+                </div>
+              </div>
+
+              <div class="item-section">
+                <div class="item-header">
+                  <div class="item-title">
+                    <span class="icon">🔐</span>
+                    <span>Tem Lacre de Segurança?</span>
+                  </div>
+                  <div class="sim-nao-group">
+                    <div class="radio-option">
+                      <input type="radio" id="temLacre-sim-${i}" name="temLacre-${i}" value="sim">
+                      <label for="temLacre-sim-${i}">Sim</label>
+                    </div>
+                    <div class="radio-option">
+                      <input type="radio" id="temLacre-nao-${i}" name="temLacre-${i}" value="nao">
+                      <label for="temLacre-nao-${i}">Não</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="photo-upload">
+                  <label class="photo-label">📸 Foto do Lacre de Segurança</label>
+                  <div class="photo-preview empty" id="preview-lacre-${i}" onclick="triggerFileInput('lacre-${i}')">
+                    <div class="camera-icon">📷</div>
+                    <div>Clique para tirar foto</div>
+                  </div>
+                  <input type="file" id="file-lacre-${i}" class="file-input" accept="image/*" onchange="handlePhotoUpload('lacre-${i}', ${i})">
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function toggleDependencia(elementId, mostrar) {
+      const elemento = document.getElementById(elementId);
+      if (elemento) {
+        if (mostrar) {
+          elemento.classList.remove('hidden');
+        } else {
+          elemento.classList.add('hidden');
+        }
+      }
+    }
+
+    function triggerFileInput(itemId) {
+      document.getElementById(`file-${itemId}`).click();
+    }
+
+    async function handlePhotoUpload(itemId, tanqueNum) {
+      const fileInput = document.getElementById(`file-${itemId}`);
+      const file = fileInput.files[0];
+
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('foto', file);
+
+      try {
+        const response = await fetch(`${API_BASE}/upload`, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) throw new Error('Erro ao fazer upload');
+
+        const data = await response.json();
+        
+        if (!itensData[tanqueNum]) itensData[tanqueNum] = {};
+        itensData[tanqueNum][itemId] = data.fotoUrl;
+
+        const preview = document.getElementById(`preview-${itemId}`);
+        preview.innerHTML = `<img src="${data.fotoUrl}" alt="Foto de ${itemId}">`;
+        preview.classList.remove('empty');
+
+        showMessage(`✓ Foto de ${itemId} enviada com sucesso`, 'success');
+      } catch (err) {
+        showMessage(`✗ Erro ao enviar foto: ${err.message}`, 'error');
+      }
+    }
+
+    function showMessage(message, type = 'success') {
+      const element = document.getElementById('message');
+      element.textContent = message;
+      element.className = `message show ${type}`;
+      setTimeout(() => {
+        element.classList.remove('show');
+      }, 4000);
+    }
+
+    document.getElementById('formTanques').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      try {
+        for (let i = 1; i <= quantidadeTanques; i++) {
+          const tanqueResponse = await fetch(`${API_BASE}/tanques`, {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+              cliente_id: clienteId,
+              numero_tanque: i,
+              capacidade_litros: parseInt(document.getElementById(`capacidade-${i}`).value),
+              condicao_plastico: document.getElementById(`condicao-${i}`).value,
+              latitude: localizacaoAtual.latitude,
+              longitude: localizacaoAtual.longitude
+            })
+          });
+
+          if (!tanqueResponse.ok) throw new Error(`Erro ao salvar tanque ${i}`);
+          const tanque = await tanqueResponse.json();
+
+          const itens = [
+            { tipo: 'propulsora', radio: `temPropulsora-${i}`, foto: `propulsora-${i}` },
+            { tipo: 'propulsora_lacre', radio: `temPropulsoraLacre-${i}`, foto: `propulsora-lacre-${i}` },
+            { tipo: 'mangueira', radio: `temMangueira-${i}`, foto: `mangueira-${i}` },
+            { tipo: 'pistola', radio: `temPistola-${i}`, foto: `pistola-${i}` },
+            { tipo: 'pistola_digital', radio: `temPistolaDigital-${i}`, foto: `pistola-digital-${i}` },
+            { tipo: 'bacia_contencao', radio: `temBacia-${i}`, foto: `bacia-${i}` },
+            { tipo: 'lacre_seguranca', radio: `temLacre-${i}`, foto: `lacre-${i}` }
+          ];
+
+          for (const item of itens) {
+            const radioSim = document.getElementById(`${item.radio}-sim`);
+            const radioNao = document.getElementById(`${item.radio}-nao`);
+            
+            if (radioSim || radioNao) {
+              const resposta = radioSim?.checked ? 1 : (radioNao?.checked ? 0 : null);
+              const fotoUrl = itensData[i] && itensData[i][item.foto] ? itensData[i][item.foto] : null;
+              
+              await fetch(`${API_BASE}/itens`, {
+                method: 'POST',
+                headers: { 
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                  tanque_id: tanque.id,
+                  tipo_item: item.tipo,
+                  foto_url: fotoUrl,
+                  resposta_sim_nao: resposta
+                })
+              });
+            }
+          }
+        }
+
+        showMessage('✓ Todos os tanques foram salvos com sucesso!', 'success');
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 2000);
+      } catch (err) {
+        showMessage(`✗ Erro: ${err.message}`, 'error');
+      }
+    });
+
+    function voltarParaClientes() {
+      if (confirm('Deseja voltar? Os dados não salvos serão perdidos.')) {
+        window.location.href = '/';
+      }
+    }
+
+    inicializar();
+  </script>
+</body>
+</html>

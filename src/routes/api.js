@@ -10,10 +10,8 @@ const router = express.Router();
 
 // Rotas de Autenticação
 router.post('/auth/login', authController.login);
-router.post('/auth/registrar', authController.registrar);
-router.get('/auth/me', authController.me);
-router.get('/auth/usuarios', authController.listarUsuarios);
-router.post('/auth/usuarios', authController.criarUsuario);
+router.get('/auth/me', authController.verificarToken);
+router.post('/auth/logout', authController.logout);
 
 // Configurar multer para upload de fotos
 const upload = multer({
@@ -28,12 +26,12 @@ const upload = multer({
   }
 });
 
-// // Rotas de Clientes
-router.get('/clientes', clientesController.getAllClientes);
-router.get('/clientes/:id', clientesController.getClienteById);
-router.post('/clientes', clientesController.createCliente);
-router.put('/clientes/:id', clientesController.updateCliente);
-router.delete('/clientes/:id', clientesController.deleteCliente);
+// Rotas de Clientes (com autenticação)
+router.get('/clientes', authController.autenticar, clientesController.getAllClientes);
+router.get('/clientes/:id', authController.autenticar, clientesController.getClienteById);
+router.post('/clientes', authController.autenticar, clientesController.createCliente);
+router.put('/clientes/:id', authController.autenticar, clientesController.updateCliente);
+router.delete('/clientes/:id', authController.autenticar, authController.verificarAdmin, clientesController.deleteCliente);
 
 // Rotas de Tanques
 router.get('/clientes/:cliente_id/tanques', tanquesController.getTanquesByCliente);

@@ -47,3 +47,21 @@
 - [x] Melhorar layout com cores da Evermax
 - [x] Implementar autenticação (vendedor/admin)
 - [x] Adicionar logo da Evermax
+
+## Implementação de Autenticação por Email
+
+- [ ] Refatorar login para aceitar apenas email (sem senha)
+- [ ] Vendedor vê apenas seus próprios dados
+- [ ] Admin vê todos os dados
+- [ ] Adicionar painel de relatórios para admin
+- [ ] Testar fluxo vendedor vs admin
+
+## Implementação de Geolocalização
+
+- [ ] Instalar jsonwebtoken
+- [ ] Capturar localização GPS do vendedor
+- [ ] Armazenar latitude/longitude no banco
+- [ ] Criar painel de admin com mapa
+- [ ] Exibir marcadores de localização no mapa
+- [ ] Mostrar coordenadas nos relatórios
+- [ ] Testar geolocalização em tablet
