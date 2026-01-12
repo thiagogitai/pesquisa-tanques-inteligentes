@@ -323,7 +323,7 @@
   </div>
 
   <script>
-    const API_BASE = '/api';
+    const API_BASE = 'api';
     let clienteId = null;
     const token = localStorage.getItem('token');
     const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
@@ -340,19 +340,19 @@
       clienteId = getQueryParam('id');
 
       if (!token) {
-        window.location.href = '/login-email.html';
+        window.location.href = 'login-email.html';
         return;
       }
 
       if (!usuario.id) {
         localStorage.removeItem('token');
         localStorage.removeItem('usuario');
-        window.location.href = '/login-email.html';
+        window.location.href = 'login-email.html';
         return;
       }
 
       if (!clienteId) {
-        window.location.href = '/';
+        window.location.href = './';
         return;
       }
 
@@ -362,13 +362,13 @@
     // Carregar dados do cliente e tanques
     async function carregarDados() {
       try {
-        const clienteResponse = await fetch(`${API_BASE}/clientes/${clienteId}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
+      const clienteResponse = await fetch(`${API_BASE}/clientes/${clienteId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
         if (clienteResponse.status === 401 || clienteResponse.status === 403) {
           localStorage.removeItem('token');
           localStorage.removeItem('usuario');
-          window.location.href = '/login-email.html';
+          window.location.href = 'login-email.html';
           return;
         }
         if (!clienteResponse.ok) throw new Error('Cliente não encontrado');
@@ -376,13 +376,13 @@
         const cliente = await clienteResponse.json();
         exibirClienteInfo(cliente);
 
-        const tanquesResponse = await fetch(`${API_BASE}/clientes/${clienteId}/tanques`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
+      const tanquesResponse = await fetch(`${API_BASE}/clientes/${clienteId}/tanques`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
         if (tanquesResponse.status === 401 || tanquesResponse.status === 403) {
           localStorage.removeItem('token');
           localStorage.removeItem('usuario');
-          window.location.href = '/login-email.html';
+          window.location.href = 'login-email.html';
           return;
         }
         if (!tanquesResponse.ok) throw new Error('Erro ao carregar tanques');
@@ -415,13 +415,17 @@
               <span class="info-label">Celular</span>
               <span class="info-value">${cliente.celular_ddd}</span>
             </div>
-            <div class="info-item">
-              <span class="info-label">Quantidade de Tanques</span>
-              <span class="info-value">${cliente.quantidade_tanques}</span>
-            </div>
-          </div>
-        </div>
-      `;
+             <div class="info-item">
+               <span class="info-label">Quantidade de Tanques</span>
+               <span class="info-value">${cliente.quantidade_tanques}</span>
+             </div>
+             <div class="info-item">
+               <span class="info-label">Interesse em voltar (Tanque Inteligente)</span>
+               <span class="info-value">${cliente.interesse_voltar_tanque_inteligente ? 'Sim' : 'Não'}</span>
+             </div>
+           </div>
+         </div>
+       `;
 
       document.getElementById('clienteInfo').innerHTML = html;
     }
@@ -575,12 +579,12 @@
 
     // Adicionar novo tanque
     function adicionarTanque() {
-      window.location.href = `/formulario-tanques.html?cliente_id=${clienteId}&quantidade=1`;
+      window.location.href = `formulario-tanques.html?cliente_id=${clienteId}&quantidade=1`;
     }
 
     // Voltar para lista
     function voltarParaLista() {
-      window.location.href = '/';
+      window.location.href = './';
     }
 
     // Inicializar ao carregar página

@@ -348,7 +348,7 @@
   <header>
     <div class="header-content">
       <div class="header-left">
-        <img src="/logo-evermax.png" alt="Evermax">
+        <img src="logo-evermax.png" alt="Evermax">
         <div class="header-title">
           <h1>Relatórios - Pesquisa Tanques</h1>
           <p>Painel de Administrador</p>
@@ -457,7 +457,7 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    const API_BASE = '/api';
+    const API_BASE = 'api';
     let mapa = null;
     let marcadores = [];
     let todosClientes = [];
@@ -468,7 +468,7 @@
       const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
 
       if (!token || usuario.role !== 'admin') {
-        window.location.href = '/login-email.html';
+        window.location.href = 'login-email.html';
         return;
       }
 

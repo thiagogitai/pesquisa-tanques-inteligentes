@@ -216,7 +216,7 @@
 <body>
   <div class="login-container">
     <div class="logo-section">
-      <img src="/logo-evermax.png" alt="Evermax Logo">
+      <img src="logo-evermax.png" alt="Evermax Logo">
       <h1>Pesquisa Tanques</h1>
       <p>Sistema de Gestão Evermax</p>
     </div>
@@ -279,7 +279,7 @@
   </div>
 
   <script>
-    const API_BASE = '/api';
+    const API_BASE = 'api';
 
     function switchTab(tab) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -329,9 +329,9 @@
 
         // Redirecionar
         if (data.usuario.tipo === 'admin') {
-          window.location.href = '/admin.html';
+          window.location.href = 'admin.html';
         } else {
-          window.location.href = '/';
+          window.location.href = './';
         }
       } catch (err) {
         showMessage(err.message, 'error');
@@ -370,7 +370,7 @@
         showMessage('Registrado com sucesso! Redirecionando...', 'success');
         
         setTimeout(() => {
-          window.location.href = '/';
+          window.location.href = './';
         }, 1500);
       } catch (err) {
         showMessage(err.message, 'error');
@@ -387,9 +387,9 @@
       if (token && usuario) {
         const user = JSON.parse(usuario);
         if (user.tipo === 'admin') {
-          window.location.href = '/admin.html';
+          window.location.href = 'admin.html';
         } else {
-          window.location.href = '/';
+          window.location.href = './';
         }
       }
     });

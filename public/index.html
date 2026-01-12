@@ -370,7 +370,7 @@
   <header>
     <div class="header-content">
       <div class="header-left">
-        <img src="/logo-evermax.png" alt="Evermax">
+          <img src="logo-evermax.png" alt="Evermax">
         <div class="header-title">
           <h1>Pesquisa Tanques</h1>
           <p>Sistema de Gestão Evermax</p>
@@ -421,6 +421,22 @@
           </div>
         </div>
 
+        <div class="form-row full">
+          <div class="form-group">
+            <label>Interesse em voltar a trabalhar com Tanque Inteligente? *</label>
+            <div class="sim-nao-group" style="margin-top: 6px;">
+              <div class="radio-option">
+                <input type="radio" id="interesseVoltarSim" name="interesseVoltar" value="sim" required>
+                <label for="interesseVoltarSim">Sim</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="interesseVoltarNao" name="interesseVoltar" value="nao" required>
+                <label for="interesseVoltarNao">Não</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="button-group">
           <button type="submit" class="btn-primary">✓ Próximo: Cadastrar Tanques</button>
         </div>
@@ -442,7 +458,7 @@
   </div>
 
   <script>
-    const API_BASE = '/api';
+    const API_BASE = 'api';
 
     // Verificar autenticação
     window.addEventListener('load', async () => {
@@ -450,7 +466,7 @@
       const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
 
       if (!token) {
-        window.location.href = '/login-email.html';
+        window.location.href = 'login-email.html';
         return;
       }
 
@@ -458,7 +474,7 @@
       if (!usuario.id) {
         localStorage.removeItem('token');
         localStorage.removeItem('usuario');
-        window.location.href = '/login-email.html';
+        window.location.href = 'login-email.html';
         return;
       }
 
@@ -470,13 +486,13 @@
         if (!meResp.ok) {
           localStorage.removeItem('token');
           localStorage.removeItem('usuario');
-          window.location.href = '/login-email.html';
+          window.location.href = 'login-email.html';
           return;
         }
       } catch {
         localStorage.removeItem('token');
         localStorage.removeItem('usuario');
-        window.location.href = '/login-email.html';
+        window.location.href = 'login-email.html';
         return;
       }
 
@@ -514,11 +530,18 @@
       e.preventDefault();
 
       const token = localStorage.getItem('token');
+      const interesseVoltar = document.querySelector('input[name="interesseVoltar"]:checked')?.value;
+      if (!interesseVoltar) {
+        showMessage('novoClienteMessage', 'Preencha o interesse em voltar a trabalhar com Tanque Inteligente.', 'error');
+        return;
+      }
+
       const dados = {
         cod_cliente: document.getElementById('codCliente').value,
         nome_contato: document.getElementById('nomeContato').value,
         celular_ddd: document.getElementById('celularDdd').value,
-        quantidade_tanques: parseInt(document.getElementById('quantidadeTanques').value)
+        quantidade_tanques: parseInt(document.getElementById('quantidadeTanques').value),
+        interesse_voltar_tanque_inteligente: interesseVoltar === 'sim' ? 1 : 0
       };
 
       try {
@@ -534,7 +557,7 @@
         if (response.status === 401 || response.status === 403) {
           localStorage.removeItem('token');
           localStorage.removeItem('usuario');
-          window.location.href = '/login-email.html';
+          window.location.href = 'login-email.html';
           return;
         }
 
@@ -544,7 +567,7 @@
         showMessage('novoClienteMessage', '✓ Cliente criado com sucesso! Redirecionando...', 'success');
         
         setTimeout(() => {
-          window.location.href = `/formulario-tanques-geo.html?cliente_id=${cliente.id}&quantidade=${dados.quantidade_tanques}`;
+          window.location.href = `formulario-tanques-geo.html?cliente_id=${cliente.id}&quantidade=${dados.quantidade_tanques}`;
         }, 1500);
       } catch (err) {
         showMessage('novoClienteMessage', `✗ Erro: ${err.message}`, 'error');
@@ -573,7 +596,7 @@
         }
 
         container.innerHTML = clientes.map(cliente => `
-          <div class="cliente-card" onclick="window.location.href='/detalhes-cliente.html?id=${cliente.id}'">
+            <div class="cliente-card" onclick="window.location.href='detalhes-cliente.html?id=${cliente.id}'">
             <h3>${cliente.nome_contato}</h3>
             <p><strong>Código:</strong> ${cliente.cod_cliente}</p>
             <p><strong>Celular:</strong> ${cliente.celular_ddd}</p>
@@ -602,7 +625,7 @@
     function logout() {
       localStorage.removeItem('token');
       localStorage.removeItem('usuario');
-      window.location.href = '/login-email.html';
+      window.location.href = 'login-email.html';
     }
   </script>
 </body>

@@ -478,7 +478,7 @@
   <header>
     <div class="header-content">
       <div class="logo">
-        <img src="/logo-evermax.png" alt="Evermax">
+        <img src="logo-evermax.png" alt="Evermax">
         <h1>Cadastro de Tanques</h1>
       </div>
       <div class="cliente-info" id="clienteInfo">Carregando...</div>
@@ -533,7 +533,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <script>
-    const API_BASE = '/api';
+    const API_BASE = 'api';
     let clienteId = null;
     let quantidadeTanques = 0;
     let mapa = null;
@@ -568,7 +568,7 @@
       quantidadeTanques = parseInt(getQueryParam('quantidade')) || 1;
 
       if (!clienteId) {
-        window.location.href = '/';
+        window.location.href = './';
         return;
       }
 
@@ -1029,7 +1029,7 @@
 
         showMessage('✓ Todos os tanques foram salvos com sucesso!', 'success');
         setTimeout(() => {
-          window.location.href = '/';
+          window.location.href = './';
         }, 2000);
       } catch (err) {
         showMessage(`✗ Erro: ${err.message}`, 'error');
@@ -1038,7 +1038,7 @@
 
     function voltarParaClientes() {
       if (confirm('Deseja voltar? Os dados não salvos serão perdidos.')) {
-        window.location.href = '/';
+        window.location.href = './';
       }
     }
 

@@ -61,18 +61,25 @@ exports.createCliente = (req, res) => {
   const usuario = getUsuario(req, res);
   if (!usuario) return;
 
-  const { cod_cliente, nome_contato, celular_ddd, quantidade_tanques } = req.body;
+  const { cod_cliente, nome_contato, celular_ddd, quantidade_tanques, interesse_voltar_tanque_inteligente } = req.body;
 
   if (!cod_cliente || !nome_contato || !celular_ddd || !quantidade_tanques) {
     return res.status(400).json({ erro: 'Todos os campos são obrigatórios' });
   }
 
+  if (interesse_voltar_tanque_inteligente !== 0 && interesse_voltar_tanque_inteligente !== 1) {
+    return res.status(400).json({ erro: 'Interesse em voltar é obrigatório' });
+  }
+
   const query = `
-    INSERT INTO clientes (usuario_id, cod_cliente, nome_contato, celular_ddd, quantidade_tanques)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO clientes (usuario_id, cod_cliente, nome_contato, celular_ddd, quantidade_tanques, interesse_voltar_tanque_inteligente)
+    VALUES (?, ?, ?, ?, ?, ?)
   `;
 
-  db.run(query, [usuario.id, cod_cliente, nome_contato, celular_ddd, quantidade_tanques], function (err) {
+  db.run(
+    query,
+    [usuario.id, cod_cliente, nome_contato, celular_ddd, quantidade_tanques, interesse_voltar_tanque_inteligente],
+    function (err) {
     if (err) {
       if (err.message.includes('UNIQUE')) {
         return res.status(400).json({ erro: 'Código de cliente já existe para este vendedor' });
@@ -86,7 +93,8 @@ exports.createCliente = (req, res) => {
       cod_cliente,
       nome_contato,
       celular_ddd,
-      quantidade_tanques
+      quantidade_tanques,
+      interesse_voltar_tanque_inteligente
     });
   });
 };
@@ -125,4 +133,3 @@ exports.deleteCliente = (req, res) => {
     res.json({ mensagem: 'Cliente deletado com sucesso' });
   });
 };
-

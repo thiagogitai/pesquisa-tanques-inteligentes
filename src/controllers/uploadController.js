@@ -28,7 +28,9 @@ exports.uploadFoto = async (req, res) => {
       .jpeg({ quality: 80 })
       .toFile(filepath);
 
-    const fotoUrl = `/uploads/${filename}`;
+    // Compatível com app rodando em subpasta (ex.: /pesquisa/api)
+    const basePath = req.baseUrl && req.baseUrl.endsWith('/api') ? req.baseUrl.slice(0, -4) : '';
+    const fotoUrl = `${basePath}/uploads/${filename}`;
 
     res.status(201).json({
       mensagem: 'Foto enviada com sucesso',

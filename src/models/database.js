@@ -54,6 +54,7 @@ function initializeDatabase() {
         nome_contato TEXT NOT NULL,
         celular_ddd TEXT NOT NULL,
         quantidade_tanques INTEGER NOT NULL,
+        interesse_voltar_tanque_inteligente INTEGER NOT NULL DEFAULT 0,
         latitude REAL,
         longitude REAL,
         data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -106,6 +107,10 @@ function initializeDatabase() {
     console.log('Tabelas criadas/verificadas com sucesso');
 
     // Garantir colunas esperadas pelos controllers mesmo em bancos antigos
+    ensureTableColumns('clientes', [
+      { name: 'interesse_voltar_tanque_inteligente', definition: 'INTEGER NOT NULL DEFAULT 0' }
+    ]);
+
     ensureTableColumns('tanques', [
       { name: 'foto_url', definition: 'TEXT' },
       { name: 'tem_propulsora', definition: 'INTEGER DEFAULT 0' },

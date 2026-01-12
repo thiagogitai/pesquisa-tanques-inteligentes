@@ -16,3 +16,9 @@ build/
 *.swo
 public/uploads/*
 !public/uploads/.gitkeep
+
+# SSH keys
+*.ppk
+*.pem
+*.key
+*.key.pub
