@@ -49,4 +49,12 @@ router.delete('/itens/:id', itensController.deleteItem);
 router.post('/upload', upload.single('foto'), uploadController.uploadFoto);
 router.delete('/uploads/:filename', uploadController.deleteFoto);
 
+// Rotas de Relatórios (apenas admin)
+const relatoriosController = require('../controllers/relatoriosController');
+router.get('/relatorios/clientes-detalhes', authController.autenticar, authController.verificarAdmin, relatoriosController.getAllClientesComDetalhes);
+router.get('/relatorios/mapa', authController.autenticar, authController.verificarAdmin, relatoriosController.getClientesParaMapa);
+router.get('/relatorios/estatisticas', authController.autenticar, authController.verificarAdmin, relatoriosController.getEstatisticas);
+router.get('/relatorios/por-vendedor', authController.autenticar, authController.verificarAdmin, relatoriosController.getDadosPorVendedor);
+router.get('/relatorios/cliente/:id', authController.autenticar, authController.verificarAdmin, relatoriosController.getClienteDetalhado);
+
 module.exports = router;
