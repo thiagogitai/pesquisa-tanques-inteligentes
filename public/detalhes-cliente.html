@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalhes do Cliente</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      color: #333;
+      font-size: 24px;
+    }
+
+    .header-info {
+      text-align: right;
+    }
+
+    .header-info p {
+      color: #666;
+      font-size: 14px;
+      margin: 5px 0;
+    }
+
+    .content {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .cliente-info {
+      background: #f9f9f9;
+      border-left: 4px solid #667eea;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 4px;
+    }
+
+    .cliente-info h2 {
+      color: #333;
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-label {
+      color: #666;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .info-value {
+      color: #333;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .tanques-container {
+      margin-top: 30px;
+    }
+
+    .tanques-container h2 {
+      color: #333;
+      font-size: 20px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    .tanque-card {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .tanque-card h3 {
+      color: #667eea;
+      font-size: 16px;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tanque-foto {
+      width: 100%;
+      max-width: 300px;
+      height: 300px;
+      background: #e0e0e0;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .tanque-foto img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .tanque-foto.empty {
+      color: #999;
+      font-size: 14px;
+    }
+
+    .tanque-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .detail-item strong {
+      color: #667eea;
+      min-width: 150px;
+    }
+
+    .detail-value {
+      color: #666;
+    }
+
+    .detail-value.sim {
+      color: #059669;
+      font-weight: 600;
+    }
+
+    .detail-value.nao {
+      color: #dc2626;
+      font-weight: 600;
+    }
+
+    .observacoes {
+      background: #f0f7ff;
+      border-left: 3px solid #667eea;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 4px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 30px;
+      justify-content: space-between;
+    }
+
+    button {
+      padding: 12px 24px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #5568d3;
+    }
+
+    button.secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    button.secondary:hover {
+      background: #e0e0e0;
+    }
+
+    button.danger {
+      background: #ef4444;
+    }
+
+    button.danger:hover {
+      background: #dc2626;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+
+    .spinner {
+      border: 4px solid #f0f0f0;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .message {
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .message.success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .message.error {
+      background: #fee2e2;
+      color: #7f1d1d;
+      border: 1px solid #fecaca;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #999;
+    }
+
+    @media (max-width: 768px) {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tanque-details {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .header-info {
+        text-align: left;
+        margin-top: 15px;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>👤 Detalhes do Cliente</h1>
+      <div class="header-info">
+        <p id="dataAtualizacao"></p>
+      </div>
+    </header>
+
+    <div class="content">
+      <div id="message"></div>
+      <div id="clienteInfo"></div>
+      <div id="tanquesContainer"></div>
+      <div class="button-group">
+        <button type="button" class="secondary" onclick="voltarParaLista()">← Voltar</button>
+        <button type="button" onclick="adicionarTanque()">+ Adicionar Tanque</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '/api';
+    let clienteId = null;
+
+    // Obter parâmetro da URL
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    // Inicializar página
+    function inicializar() {
+      clienteId = getQueryParam('id');
+
+      if (!clienteId) {
+        window.location.href = '/';
+        return;
+      }
+
+      carregarDados();
+    }
+
+    // Carregar dados do cliente e tanques
+    async function carregarDados() {
+      try {
+        const clienteResponse = await fetch(`${API_BASE}/clientes/${clienteId}`);
+        if (!clienteResponse.ok) throw new Error('Cliente não encontrado');
+
+        const cliente = await clienteResponse.json();
+        exibirClienteInfo(cliente);
+
+        const tanquesResponse = await fetch(`${API_BASE}/clientes/${clienteId}/tanques`);
+        if (!tanquesResponse.ok) throw new Error('Erro ao carregar tanques');
+
+        const tanques = await tanquesResponse.json();
+        exibirTanques(tanques);
+      } catch (err) {
+        showMessage(`Erro ao carregar dados: ${err.message}`, 'error');
+      }
+    }
+
+    // Exibir informações do cliente
+    function exibirClienteInfo(cliente) {
+      const data = new Date(cliente.data_atualizacao).toLocaleDateString('pt-BR');
+      document.getElementById('dataAtualizacao').textContent = `Atualizado em: ${data}`;
+
+      const html = `
+        <div class="cliente-info">
+          <h2>Informações do Cliente</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Código</span>
+              <span class="info-value">${cliente.cod_cliente}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Nome do Contato</span>
+              <span class="info-value">${cliente.nome_contato}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Celular</span>
+              <span class="info-value">${cliente.celular_ddd}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Quantidade de Tanques</span>
+              <span class="info-value">${cliente.quantidade_tanques}</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('clienteInfo').innerHTML = html;
+    }
+
+    // Exibir tanques
+    function exibirTanques(tanques) {
+      const container = document.getElementById('tanquesContainer');
+
+      if (tanques.length === 0) {
+        container.innerHTML = `
+          <div class="tanques-container">
+            <h2>Tanques</h2>
+            <div class="empty-state">
+              <p>Nenhum tanque cadastrado para este cliente</p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '<div class="tanques-container"><h2>Tanques Cadastrados</h2>';
+
+      tanques.forEach(tanque => {
+        html += `
+          <div class="tanque-card">
+            <h3>Tanque ${tanque.numero_tanque}</h3>
+            
+            ${tanque.foto_url ? `
+              <div class="tanque-foto">
+                <img src="${tanque.foto_url}" alt="Foto do Tanque ${tanque.numero_tanque}">
+              </div>
+            ` : '<div class="tanque-foto empty">Sem foto</div>'}
+
+            <div class="tanque-details">
+              <div class="detail-item">
+                <strong>Capacidade:</strong>
+                <span class="detail-value">${tanque.capacidade_litros} L</span>
+              </div>
+              <div class="detail-item">
+                <strong>Condição:</strong>
+                <span class="detail-value">${tanque.condicao_plastico}</span>
+              </div>
+              <div class="detail-item">
+                <strong>Propulsora:</strong>
+                <span class="detail-value ${tanque.tem_propulsora ? 'sim' : 'nao'}">
+                  ${tanque.tem_propulsora ? 'Sim' : 'Não'}
+                </span>
+              </div>
+              <div class="detail-item">
+                <strong>Lacre Propulsora:</strong>
+                <span class="detail-value ${tanque.propulsora_lacre ? 'sim' : 'nao'}">
+                  ${tanque.propulsora_lacre ? 'Sim' : 'Não'}
+                </span>
+              </div>
+              <div class="detail-item">
+                <strong>Mangueira:</strong>
+                <span class="detail-value ${tanque.tem_mangueira ? 'sim' : 'nao'}">
+                  ${tanque.tem_mangueira ? 'Sim' : 'Não'}
+                </span>
+              </div>
+              <div class="detail-item">
+                <strong>Pistola:</strong>
+                <span class="detail-value ${tanque.tem_pistola ? 'sim' : 'nao'}">
+                  ${tanque.tem_pistola ? 'Sim' : 'Não'}
+                </span>
+              </div>
+              <div class="detail-item">
+                <strong>Pistola Digital:</strong>
+                <span class="detail-value ${tanque.pistola_digital_funcionando ? 'sim' : 'nao'}">
+                  ${tanque.pistola_digital_funcionando ? 'Funcionando' : 'Não'}
+                </span>
+              </div>
+              <div class="detail-item">
+                <strong>Bacia Contenção:</strong>
+                <span class="detail-value ${tanque.tem_bacia_contencao ? 'sim' : 'nao'}">
+                  ${tanque.tem_bacia_contencao ? 'Sim' : 'Não'}
+                </span>
+              </div>
+              <div class="detail-item">
+                <strong>Lacre Segurança:</strong>
+                <span class="detail-value ${tanque.tem_lacre_seguranca ? 'sim' : 'nao'}">
+                  ${tanque.tem_lacre_seguranca ? 'Sim' : 'Não'}
+                </span>
+              </div>
+              <div class="detail-item">
+                <strong>Interesse Continuar:</strong>
+                <span class="detail-value ${tanque.interesse_continuar ? 'sim' : 'nao'}">
+                  ${tanque.interesse_continuar ? 'Sim' : 'Não'}
+                </span>
+              </div>
+            </div>
+
+            ${tanque.observacoes ? `
+              <div class="observacoes">
+                <strong>Observações:</strong><br>
+                ${tanque.observacoes}
+              </div>
+            ` : ''}
+
+            <div style="margin-top: 15px; display: flex; gap: 10px;">
+              <button type="button" class="secondary" onclick="editarTanque(${tanque.id})">✏️ Editar</button>
+              <button type="button" class="danger" onclick="deletarTanque(${tanque.id})">🗑️ Deletar</button>
+            </div>
+          </div>
+        `;
+      });
+
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    // Mostrar mensagem
+    function showMessage(message, type = 'info') {
+      const element = document.getElementById('message');
+      element.innerHTML = `<div class="message ${type}">${message}</div>`;
+      setTimeout(() => {
+        element.innerHTML = '';
+      }, 5000);
+    }
+
+    // Deletar tanque
+    async function deletarTanque(tanqueId) {
+      if (!confirm('Tem certeza que deseja deletar este tanque?')) return;
+
+      try {
+        const response = await fetch(`${API_BASE}/tanques/${tanqueId}`, {
+          method: 'DELETE'
+        });
+
+        if (!response.ok) throw new Error('Erro ao deletar tanque');
+
+        showMessage('Tanque deletado com sucesso', 'success');
+        setTimeout(() => carregarDados(), 1000);
+      } catch (err) {
+        showMessage(`Erro: ${err.message}`, 'error');
+      }
+    }
+
+    // Editar tanque
+    function editarTanque(tanqueId) {
+      alert('Funcionalidade de edição em desenvolvimento');
+    }
+
+    // Adicionar novo tanque
+    function adicionarTanque() {
+      window.location.href = `/formulario-tanques.html?cliente_id=${clienteId}&quantidade=1`;
+    }
+
+    // Voltar para lista
+    function voltarParaLista() {
+      window.location.href = '/';
+    }
+
+    // Inicializar ao carregar página
+    inicializar();
+  </script>
+</body>
+</html>

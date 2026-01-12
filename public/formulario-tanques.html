@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de Tanques</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      color: #333;
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+
+    header p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #e0e0e0;
+      border-radius: 4px;
+      margin-top: 15px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #667eea;
+      transition: width 0.3s ease;
+    }
+
+    .content {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-row.full {
+      grid-template-columns: 1fr;
+    }
+
+    .tanque-section {
+      background: #f9f9f9;
+      border: 2px solid #667eea;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    .tanque-section h2 {
+      color: #667eea;
+      margin-bottom: 20px;
+      font-size: 18px;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    .photo-upload {
+      margin-bottom: 20px;
+    }
+
+    .photo-preview {
+      width: 100%;
+      max-width: 300px;
+      height: 300px;
+      background: #f0f0f0;
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .photo-preview:hover {
+      border-color: #667eea;
+      background: #f5f5ff;
+    }
+
+    .photo-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-preview.empty {
+      color: #999;
+      font-size: 14px;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .checkbox-item label {
+      margin: 0;
+      cursor: pointer;
+      font-weight: 400;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 30px;
+      justify-content: space-between;
+    }
+
+    button {
+      padding: 12px 24px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #5568d3;
+    }
+
+    button.secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    button.secondary:hover {
+      background: #e0e0e0;
+    }
+
+    .message {
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .message.success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .message.error {
+      background: #fee2e2;
+      color: #7f1d1d;
+      border: 1px solid #fecaca;
+    }
+
+    .message.info {
+      background: #dbeafe;
+      color: #1e3a8a;
+      border: 1px solid #bfdbfe;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+
+    .spinner {
+      border: 4px solid #f0f0f0;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .checkbox-group {
+        grid-template-columns: 1fr;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      .content {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📦 Cadastro de Tanques</h1>
+      <p id="clienteInfo"></p>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </header>
+
+    <div class="content">
+      <div id="message"></div>
+      <form id="formTanques"></form>
+      <div class="button-group">
+        <button type="button" class="secondary" onclick="voltarParaClientes()">← Voltar</button>
+        <button type="submit" form="formTanques">✓ Salvar Tanques</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '/api';
+    let clienteId = null;
+    let quantidadeTanques = 0;
+    const tanquesFotos = {};
+
+    // Obter parâmetros da URL
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    // Inicializar página
+    function inicializar() {
+      clienteId = getQueryParam('cliente_id');
+      quantidadeTanques = parseInt(getQueryParam('quantidade')) || 1;
+
+      if (!clienteId) {
+        window.location.href = '/';
+        return;
+      }
+
+      carregarDadosCliente();
+      gerarFormularioTanques();
+    }
+
+    // Carregar dados do cliente
+    async function carregarDadosCliente() {
+      try {
+        const response = await fetch(`${API_BASE}/clientes/${clienteId}`);
+        if (!response.ok) throw new Error('Cliente não encontrado');
+
+        const cliente = await response.json();
+        document.getElementById('clienteInfo').textContent = 
+          `Cliente: ${cliente.nome_contato} (${cliente.cod_cliente})`;
+      } catch (err) {
+        showMessage('Erro ao carregar dados do cliente', 'error');
+      }
+    }
+
+    // Gerar formulário de tanques
+    function gerarFormularioTanques() {
+      const form = document.getElementById('formTanques');
+      form.innerHTML = '';
+
+      for (let i = 1; i <= quantidadeTanques; i++) {
+        form.innerHTML += `
+          <div class="tanque-section">
+            <h2>Tanque ${i}</h2>
+
+            <div class="photo-upload">
+              <label>Foto do Tanque</label>
+              <div class="photo-preview empty" id="preview-${i}" onclick="triggerFileInput(${i})">
+                📷 Clique para tirar foto
+              </div>
+              <input type="file" id="file-${i}" class="file-input" accept="image/*" onchange="handlePhotoUpload(${i})">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="capacidade-${i}">Capacidade do Tanque (Litros) *</label>
+                <select id="capacidade-${i}" name="capacidade-${i}" required>
+                  <option value="">Selecione...</option>
+                  <option value="400">400 Litros</option>
+                  <option value="1000">1000 Litros</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="condicao-${i}">Condição do Plástico *</label>
+                <select id="condicao-${i}" name="condicao-${i}" required>
+                  <option value="">Selecione...</option>
+                  <option value="excelente">Excelente</option>
+                  <option value="bom">Bom</option>
+                  <option value="regular">Regular</option>
+                  <option value="ruim">Ruim</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="checkbox-group">
+              <div class="checkbox-item">
+                <input type="checkbox" id="propulsora-${i}" name="propulsora-${i}">
+                <label for="propulsora-${i}">Tem Propulsora?</label>
+              </div>
+              <div class="checkbox-item">
+                <input type="checkbox" id="propulsora-lacre-${i}" name="propulsora-lacre-${i}">
+                <label for="propulsora-lacre-${i}">Propulsora com Lacre?</label>
+              </div>
+              <div class="checkbox-item">
+                <input type="checkbox" id="mangueira-${i}" name="mangueira-${i}">
+                <label for="mangueira-${i}">Tem Mangueira?</label>
+              </div>
+              <div class="checkbox-item">
+                <input type="checkbox" id="pistola-${i}" name="pistola-${i}">
+                <label for="pistola-${i}">Tem Pistola de Abastecimento?</label>
+              </div>
+              <div class="checkbox-item">
+                <input type="checkbox" id="pistola-digital-${i}" name="pistola-digital-${i}">
+                <label for="pistola-digital-${i}">Pistola Digital Funcionando?</label>
+              </div>
+              <div class="checkbox-item">
+                <input type="checkbox" id="bacia-${i}" name="bacia-${i}">
+                <label for="bacia-${i}">Tem Bacia de Contenção?</label>
+              </div>
+              <div class="checkbox-item">
+                <input type="checkbox" id="lacre-seguranca-${i}" name="lacre-seguranca-${i}">
+                <label for="lacre-seguranca-${i}">Tem Lacre de Segurança?</label>
+              </div>
+              <div class="checkbox-item">
+                <input type="checkbox" id="interesse-${i}" name="interesse-${i}">
+                <label for="interesse-${i}">Cliente Tem Interesse em Continuar?</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="observacoes-${i}">Observações</label>
+              <textarea id="observacoes-${i}" name="observacoes-${i}" rows="3" placeholder="Adicione observações sobre o tanque..."></textarea>
+            </div>
+          </div>
+        `;
+      }
+
+      atualizarProgressBar();
+    }
+
+    // Ativar input de arquivo
+    function triggerFileInput(tanqueNum) {
+      document.getElementById(`file-${tanqueNum}`).click();
+    }
+
+    // Lidar com upload de foto
+    async function handlePhotoUpload(tanqueNum) {
+      const fileInput = document.getElementById(`file-${tanqueNum}`);
+      const file = fileInput.files[0];
+
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('foto', file);
+
+      try {
+        const response = await fetch(`${API_BASE}/upload`, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) throw new Error('Erro ao fazer upload');
+
+        const data = await response.json();
+        tanquesFotos[tanqueNum] = data.fotoUrl;
+
+        const preview = document.getElementById(`preview-${tanqueNum}`);
+        preview.innerHTML = `<img src="${data.fotoUrl}" alt="Foto do Tanque ${tanqueNum}">`;
+        preview.classList.remove('empty');
+
+        showMessage(`Foto do Tanque ${tanqueNum} enviada com sucesso`, 'success');
+      } catch (err) {
+        showMessage(`Erro ao enviar foto: ${err.message}`, 'error');
+      }
+    }
+
+    // Atualizar barra de progresso
+    function atualizarProgressBar() {
+      const preenchidos = Object.keys(tanquesFotos).length;
+      const percentual = (preenchidos / quantidadeTanques) * 100;
+      document.getElementById('progressFill').style.width = percentual + '%';
+    }
+
+    // Mostrar mensagem
+    function showMessage(message, type = 'info') {
+      const element = document.getElementById('message');
+      element.innerHTML = `<div class="message ${type}">${message}</div>`;
+      setTimeout(() => {
+        element.innerHTML = '';
+      }, 5000);
+    }
+
+    // Salvar tanques
+    document.getElementById('formTanques').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      try {
+        for (let i = 1; i <= quantidadeTanques; i++) {
+          const tanque = {
+            cliente_id: clienteId,
+            numero_tanque: i,
+            foto_url: tanquesFotos[i] || null,
+            capacidade_litros: parseInt(document.getElementById(`capacidade-${i}`).value),
+            condicao_plastico: document.getElementById(`condicao-${i}`).value,
+            tem_propulsora: document.getElementById(`propulsora-${i}`).checked ? 1 : 0,
+            propulsora_lacre: document.getElementById(`propulsora-lacre-${i}`).checked ? 1 : 0,
+            tem_mangueira: document.getElementById(`mangueira-${i}`).checked ? 1 : 0,
+            tem_pistola: document.getElementById(`pistola-${i}`).checked ? 1 : 0,
+            pistola_digital_funcionando: document.getElementById(`pistola-digital-${i}`).checked ? 1 : 0,
+            tem_bacia_contencao: document.getElementById(`bacia-${i}`).checked ? 1 : 0,
+            tem_lacre_seguranca: document.getElementById(`lacre-seguranca-${i}`).checked ? 1 : 0,
+            interesse_continuar: document.getElementById(`interesse-${i}`).checked ? 1 : 0,
+            observacoes: document.getElementById(`observacoes-${i}`).value
+          };
+
+          const response = await fetch(`${API_BASE}/tanques`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(tanque)
+          });
+
+          if (!response.ok) throw new Error(`Erro ao salvar tanque ${i}`);
+        }
+
+        showMessage('Todos os tanques foram salvos com sucesso!', 'success');
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1500);
+      } catch (err) {
+        showMessage(`Erro: ${err.message}`, 'error');
+      }
+    });
+
+    // Voltar para clientes
+    function voltarParaClientes() {
+      if (confirm('Deseja voltar? Os dados não salvos serão perdidos.')) {
+        window.location.href = '/';
+      }
+    }
+
+    // Inicializar ao carregar página
+    inicializar();
+  </script>
+</body>
+</html>
