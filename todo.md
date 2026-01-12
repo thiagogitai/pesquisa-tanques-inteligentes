@@ -112,3 +112,24 @@
 **✅ APLICAÇÃO PRONTA PARA USO**
 
 A aplicação está completa, testada e pronta para os vendedores utilizarem em tablets. Todos os requisitos foram implementados com sucesso.
+
+
+## 📊 Painel de Relatórios para Admin
+
+- [x] Criar endpoints de API para relatórios
+- [x] Implementar aba de Mapa de Clientes
+- [x] Implementar aba de Estatísticas Gerais
+- [x] Implementar aba de Tabela Completa
+- [x] Implementar aba de Dados por Vendedor
+- [x] Adicionar filtros por vendedor
+- [x] Integrar Leaflet para mapa interativo
+- [x] Exibir marcadores com informações dos clientes
+- [x] Testar painel de relatórios com admin
+
+
+## 📥 Exportação de Dados
+
+- [x] Adicionar botão de exportação CSV na tabela
+- [x] Implementar função de geração de CSV
+- [x] Exportar dados filtrados ou todos
+- [x] Testar exportação com dados reais

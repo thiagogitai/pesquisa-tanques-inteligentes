@@ -399,6 +399,7 @@
           </select>
         </div>
         <button class="btn-filtrar" onclick="filtrarTabela()">Filtrar</button>
+        <button class="btn-filtrar" onclick="exportarCSV()" style="background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);">📥 Exportar CSV</button>
       </div>
       <div class="table-container">
         <table id="tabelaClientes">
@@ -595,6 +596,51 @@
       const vendedor = document.getElementById('filtroVendedor').value;
       const filtrados = vendedor ? todosClientes.filter(c => c.usuario_email === vendedor) : todosClientes;
       exibirTabela(filtrados);
+    }
+
+    function exportarCSV() {
+      const vendedor = document.getElementById('filtroVendedor').value;
+      const dados = vendedor ? todosClientes.filter(c => c.usuario_email === vendedor) : todosClientes;
+
+      if (dados.length === 0) {
+        alert('Nenhum dado para exportar!');
+        return;
+      }
+
+      const cabecalho = ['Codigo', 'Nome do Contato', 'Celular', 'Vendedor', 'Tanques', 'Latitude', 'Longitude', 'Data'];
+      const linhas = [cabecalho];
+
+      dados.forEach(cliente => {
+        linhas.push([
+          cliente.cod_cliente,
+          cliente.nome_contato,
+          cliente.celular_ddd,
+          cliente.usuario_email,
+          cliente.quantidade_tanques,
+          cliente.latitude ? cliente.latitude.toFixed(6) : '',
+          cliente.longitude ? cliente.longitude.toFixed(6) : '',
+          new Date(cliente.criado_em).toLocaleDateString('pt-BR')
+        ]);
+      });
+
+      const csv = linhas.map(linha => 
+        linha.map(celula => {
+          const valor = String(celula).replace(/"/g, '\"\"');
+          return valor.includes(',') ? '\"' + valor + '\"' : valor;
+        }).join(',')
+      ).join('\n');
+
+      const bom = '\uFEFF';
+      const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' });
+
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'relatorio-clientes-' + new Date().toISOString().split('T')[0] + '.csv');
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     function inicializarMapa(clientes = []) {
