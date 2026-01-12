@@ -37,3 +37,13 @@
 - API base: /api
 - Interface otimizada para tablets com toque
 - Todas as rotas testadas e funcionando
+
+## Correções Solicitadas
+
+- [x] Remover pergunta "Interesse em Continuar" com foto
+- [x] Converter checkboxes para SIM/NÃO (radio buttons)
+- [x] Manter perguntas com dependências funcionando
+- [x] Testar novo formulário
+- [x] Melhorar layout com cores da Evermax
+- [x] Implementar autenticação (vendedor/admin)
+- [x] Adicionar logo da Evermax

@@ -1,11 +1,19 @@
 const express = require('express');
 const multer = require('multer');
+const authController = require('../controllers/authController');
 const clientesController = require('../controllers/clientesController');
 const tanquesController = require('../controllers/tanquesController');
 const itensController = require('../controllers/itensController');
 const uploadController = require('../controllers/uploadController');
 
 const router = express.Router();
+
+// Rotas de Autenticação
+router.post('/auth/login', authController.login);
+router.post('/auth/registrar', authController.registrar);
+router.get('/auth/me', authController.me);
+router.get('/auth/usuarios', authController.listarUsuarios);
+router.post('/auth/usuarios', authController.criarUsuario);
 
 // Configurar multer para upload de fotos
 const upload = multer({
@@ -20,7 +28,7 @@ const upload = multer({
   }
 });
 
-// Rotas de Clientes
+// // Rotas de Clientes
 router.get('/clientes', clientesController.getAllClientes);
 router.get('/clientes/:id', clientesController.getClienteById);
 router.post('/clientes', clientesController.createCliente);

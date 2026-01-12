@@ -13,16 +13,33 @@ const db = new sqlite3.Database(dbPath, (err) => {
 
 function initializeDatabase() {
   db.serialize(() => {
+    // Tabela de usuários (vendedores e admin)
+    db.run(`
+      CREATE TABLE IF NOT EXISTS usuarios (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        senha TEXT NOT NULL,
+        tipo TEXT NOT NULL CHECK(tipo IN ('vendedor', 'admin')),
+        ativo INTEGER DEFAULT 1,
+        data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+        data_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     // Tabela de clientes
     db.run(`
       CREATE TABLE IF NOT EXISTS clientes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        cod_cliente TEXT UNIQUE NOT NULL,
+        usuario_id INTEGER NOT NULL,
+        cod_cliente TEXT NOT NULL,
         nome_contato TEXT NOT NULL,
         celular_ddd TEXT NOT NULL,
         quantidade_tanques INTEGER NOT NULL,
         data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
-        data_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP
+        data_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+        UNIQUE(usuario_id, cod_cliente)
       )
     `);
 
@@ -55,6 +72,12 @@ function initializeDatabase() {
     `);
 
     console.log('Tabelas criadas/verificadas com sucesso');
+
+    // Criar usuário admin padrão se não existir
+    db.run(`
+      INSERT OR IGNORE INTO usuarios (nome, email, senha, tipo)
+      VALUES ('Admin', 'admin@evermax.com.br', 'admin123', 'admin')
+    `);
   });
 }
 

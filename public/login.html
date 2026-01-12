@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Pesquisa Tanques Inteligentes</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #FF6600 0%, #FF8533 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+      width: 100%;
+      padding: 40px;
+    }
+
+    .logo-section {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo-section img {
+      max-width: 200px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+
+    .logo-section h1 {
+      color: #333;
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .logo-section p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    input[type="email"],
+    input[type="password"],
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="email"]:focus,
+    input[type="password"]:focus,
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #FF6600;
+      box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
+    }
+
+    .button-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-login {
+      background: #FF6600;
+      color: white;
+      grid-column: 1 / -1;
+    }
+
+    .btn-login:hover {
+      background: #E55A00;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255, 102, 0, 0.3);
+    }
+
+    .btn-registrar {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .btn-registrar:hover {
+      background: #e0e0e0;
+    }
+
+    .message {
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-size: 13px;
+    }
+
+    .message.error {
+      background: #fee2e2;
+      color: #7f1d1d;
+      border: 1px solid #fecaca;
+    }
+
+    .message.success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .tab-button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background: transparent;
+      color: #999;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .tab-button.active {
+      color: #FF6600;
+      border-bottom-color: #FF6600;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .spinner {
+      border: 3px solid #f0f0f0;
+      border-top: 3px solid #FF6600;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .divider {
+      text-align: center;
+      margin: 20px 0;
+      color: #999;
+      font-size: 13px;
+    }
+
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 30px 20px;
+      }
+
+      .button-group {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo-section">
+      <img src="/logo-evermax.png" alt="Evermax Logo">
+      <h1>Pesquisa Tanques</h1>
+      <p>Sistema de Gestão Evermax</p>
+    </div>
+
+    <div id="message"></div>
+
+    <div class="tabs">
+      <button class="tab-button active" onclick="switchTab('login')">Login</button>
+      <button class="tab-button" onclick="switchTab('registrar')">Registrar</button>
+    </div>
+
+    <!-- TAB LOGIN -->
+    <div id="login" class="tab-content active">
+      <form id="formLogin">
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" required placeholder="seu@email.com">
+        </div>
+        <div class="form-group">
+          <label for="loginSenha">Senha</label>
+          <input type="password" id="loginSenha" required placeholder="••••••••">
+        </div>
+        <div class="button-group">
+          <button type="submit" class="btn-login">Entrar</button>
+        </div>
+      </form>
+
+      <div class="divider">ou</div>
+
+      <div style="text-align: center; padding: 20px; background: #f9f9f9; border-radius: 6px; margin-top: 20px;">
+        <p style="color: #666; font-size: 13px; margin-bottom: 10px;">Credenciais de Teste:</p>
+        <p style="color: #333; font-size: 12px;"><strong>Admin:</strong> admin@evermax.com.br / admin123</p>
+      </div>
+    </div>
+
+    <!-- TAB REGISTRAR -->
+    <div id="registrar" class="tab-content">
+      <form id="formRegistrar">
+        <div class="form-group">
+          <label for="registrarNome">Nome Completo</label>
+          <input type="text" id="registrarNome" required placeholder="Seu nome">
+        </div>
+        <div class="form-group">
+          <label for="registrarEmail">Email</label>
+          <input type="email" id="registrarEmail" required placeholder="seu@email.com">
+        </div>
+        <div class="form-group">
+          <label for="registrarSenha">Senha</label>
+          <input type="password" id="registrarSenha" required placeholder="••••••••" minlength="6">
+        </div>
+        <div class="button-group">
+          <button type="submit" class="btn-login">Registrar como Vendedor</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '/api';
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById(tab).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    function showMessage(message, type = 'error') {
+      const element = document.getElementById('message');
+      element.innerHTML = `<div class="message ${type}">${message}</div>`;
+      setTimeout(() => {
+        element.innerHTML = '';
+      }, 5000);
+    }
+
+    function setLoading(show) {
+      document.getElementById('loading').style.display = show ? 'block' : 'none';
+    }
+
+    // Login
+    document.getElementById('formLogin').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('loginEmail').value;
+      const senha = document.getElementById('loginSenha').value;
+
+      setLoading(true);
+
+      try {
+        const response = await fetch(`${API_BASE}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, senha })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.erro || 'Erro ao fazer login');
+        }
+
+        // Salvar token
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('usuario', JSON.stringify(data.usuario));
+
+        // Redirecionar
+        if (data.usuario.tipo === 'admin') {
+          window.location.href = '/admin.html';
+        } else {
+          window.location.href = '/';
+        }
+      } catch (err) {
+        showMessage(err.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    // Registrar
+    document.getElementById('formRegistrar').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const nome = document.getElementById('registrarNome').value;
+      const email = document.getElementById('registrarEmail').value;
+      const senha = document.getElementById('registrarSenha').value;
+
+      setLoading(true);
+
+      try {
+        const response = await fetch(`${API_BASE}/auth/registrar`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nome, email, senha })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.erro || 'Erro ao registrar');
+        }
+
+        // Salvar token
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('usuario', JSON.stringify(data.usuario));
+
+        showMessage('Registrado com sucesso! Redirecionando...', 'success');
+        
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1500);
+      } catch (err) {
+        showMessage(err.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    // Verificar se já está logado
+    window.addEventListener('load', () => {
+      const token = localStorage.getItem('token');
+      const usuario = localStorage.getItem('usuario');
+      
+      if (token && usuario) {
+        const user = JSON.parse(usuario);
+        if (user.tipo === 'admin') {
+          window.location.href = '/admin.html';
+        } else {
+          window.location.href = '/';
+        }
+      }
+    });
+  </script>
+</body>
+</html>
