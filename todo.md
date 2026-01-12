@@ -8,12 +8,13 @@
 - [x] API RESTful completa para gerenciamento de tanques
 - [x] Sistema de upload de fotos com otimização
 - [x] Interface responsiva para tablets - página inicial
-- [x] Formulário dinâmico de cadastro de tanques
+- [x] Formulário dinâmico com foto individual para cada item
+- [x] Perguntas condicionais com dependências
 - [x] Página de detalhes do cliente com visualização de tanques
 - [x] Sistema de abas (Novo Cliente, Listar Clientes, Relatórios)
 - [x] Relatórios com estatísticas gerais
 - [x] Testes de API funcionando corretamente
-- [x] Interface testada e validada no navegador
+- [x] Interface testada com novo formulário
 
 ## Funcionalidades Futuras (Opcional)
 

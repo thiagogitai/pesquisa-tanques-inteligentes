@@ -63,6 +63,33 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
+    .tanque-section {
+      background: #f9f9f9;
+      border: 2px solid #667eea;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    .tanque-section h2 {
+      color: #667eea;
+      margin-bottom: 20px;
+      font-size: 18px;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .form-row.full {
+      grid-template-columns: 1fr;
+    }
+
     .form-group {
       margin-bottom: 20px;
     }
@@ -97,40 +124,35 @@
       box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
 
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-
-    .form-row.full {
-      grid-template-columns: 1fr;
-    }
-
-    .tanque-section {
-      background: #f9f9f9;
-      border: 2px solid #667eea;
+    .item-section {
+      background: white;
+      border: 1px solid #ddd;
       border-radius: 8px;
       padding: 20px;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
 
-    .tanque-section h2 {
-      color: #667eea;
-      margin-bottom: 20px;
-      font-size: 18px;
-      border-bottom: 2px solid #667eea;
-      padding-bottom: 10px;
+    .item-section h3 {
+      color: #333;
+      font-size: 16px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .item-section.hidden {
+      display: none;
     }
 
     .photo-upload {
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
 
     .photo-preview {
       width: 100%;
-      max-width: 300px;
-      height: 300px;
+      max-width: 250px;
+      height: 250px;
       background: #f0f0f0;
       border: 2px dashed #ddd;
       border-radius: 8px;
@@ -156,24 +178,19 @@
 
     .photo-preview.empty {
       color: #999;
-      font-size: 14px;
+      font-size: 13px;
+      text-align: center;
     }
 
     .file-input {
       display: none;
     }
 
-    .checkbox-group {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-
     .checkbox-item {
       display: flex;
       align-items: center;
       gap: 10px;
+      margin-bottom: 15px;
     }
 
     .checkbox-item input[type="checkbox"] {
@@ -266,12 +283,18 @@
       100% { transform: rotate(360deg); }
     }
 
+    .info-badge {
+      display: inline-block;
+      background: #667eea;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
     @media (max-width: 768px) {
       .form-row {
-        grid-template-columns: 1fr;
-      }
-
-      .checkbox-group {
         grid-template-columns: 1fr;
       }
 
@@ -281,6 +304,10 @@
 
       .content {
         padding: 20px;
+      }
+
+      .photo-preview {
+        max-width: 100%;
       }
     }
   </style>
@@ -309,7 +336,7 @@
     const API_BASE = '/api';
     let clienteId = null;
     let quantidadeTanques = 0;
-    const tanquesFotos = {};
+    const itensData = {}; // Armazenar dados dos itens
 
     // Obter parâmetros da URL
     function getQueryParam(param) {
@@ -355,14 +382,7 @@
           <div class="tanque-section">
             <h2>Tanque ${i}</h2>
 
-            <div class="photo-upload">
-              <label>Foto do Tanque</label>
-              <div class="photo-preview empty" id="preview-${i}" onclick="triggerFileInput(${i})">
-                📷 Clique para tirar foto
-              </div>
-              <input type="file" id="file-${i}" class="file-input" accept="image/*" onchange="handlePhotoUpload(${i})">
-            </div>
-
+            <!-- Capacidade e Condição -->
             <div class="form-row">
               <div class="form-group">
                 <label for="capacidade-${i}">Capacidade do Tanque (Litros) *</label>
@@ -384,60 +404,156 @@
               </div>
             </div>
 
-            <div class="checkbox-group">
-              <div class="checkbox-item">
-                <input type="checkbox" id="propulsora-${i}" name="propulsora-${i}">
-                <label for="propulsora-${i}">Tem Propulsora?</label>
-              </div>
-              <div class="checkbox-item">
-                <input type="checkbox" id="propulsora-lacre-${i}" name="propulsora-lacre-${i}">
-                <label for="propulsora-lacre-${i}">Propulsora com Lacre?</label>
-              </div>
-              <div class="checkbox-item">
-                <input type="checkbox" id="mangueira-${i}" name="mangueira-${i}">
-                <label for="mangueira-${i}">Tem Mangueira?</label>
-              </div>
-              <div class="checkbox-item">
-                <input type="checkbox" id="pistola-${i}" name="pistola-${i}">
-                <label for="pistola-${i}">Tem Pistola de Abastecimento?</label>
-              </div>
-              <div class="checkbox-item">
-                <input type="checkbox" id="pistola-digital-${i}" name="pistola-digital-${i}">
-                <label for="pistola-digital-${i}">Pistola Digital Funcionando?</label>
-              </div>
-              <div class="checkbox-item">
-                <input type="checkbox" id="bacia-${i}" name="bacia-${i}">
-                <label for="bacia-${i}">Tem Bacia de Contenção?</label>
-              </div>
-              <div class="checkbox-item">
-                <input type="checkbox" id="lacre-seguranca-${i}" name="lacre-seguranca-${i}">
-                <label for="lacre-seguranca-${i}">Tem Lacre de Segurança?</label>
-              </div>
-              <div class="checkbox-item">
-                <input type="checkbox" id="interesse-${i}" name="interesse-${i}">
-                <label for="interesse-${i}">Cliente Tem Interesse em Continuar?</label>
+            <!-- TEM PROPULSORA -->
+            <div class="item-section">
+              <h3>
+                <input type="checkbox" id="temPropulsora-${i}" onchange="toggleDependencia('propulsoraLacre-${i}', this.checked)">
+                <label for="temPropulsora-${i}">Tem Propulsora?</label>
+              </h3>
+              <div class="photo-upload">
+                <label>Foto da Propulsora</label>
+                <div class="photo-preview empty" id="preview-propulsora-${i}" onclick="triggerFileInput('propulsora-${i}')">
+                  📷 Clique para tirar foto
+                </div>
+                <input type="file" id="file-propulsora-${i}" class="file-input" accept="image/*" onchange="handlePhotoUpload('propulsora-${i}', ${i})">
               </div>
             </div>
 
+            <!-- PROPULSORA COM LACRE (Dependente) -->
+            <div class="item-section hidden" id="propulsoraLacre-${i}">
+              <h3>
+                <input type="checkbox" id="temPropulsoraLacre-${i}">
+                <label for="temPropulsoraLacre-${i}">Propulsora possui Lacre?</label>
+              </h3>
+              <div class="photo-upload">
+                <label>Foto do Lacre da Propulsora</label>
+                <div class="photo-preview empty" id="preview-propulsora-lacre-${i}" onclick="triggerFileInput('propulsora-lacre-${i}')">
+                  📷 Clique para tirar foto
+                </div>
+                <input type="file" id="file-propulsora-lacre-${i}" class="file-input" accept="image/*" onchange="handlePhotoUpload('propulsora-lacre-${i}', ${i})">
+              </div>
+            </div>
+
+            <!-- TEM MANGUEIRA -->
+            <div class="item-section">
+              <h3>
+                <input type="checkbox" id="temMangueira-${i}">
+                <label for="temMangueira-${i}">Tem Mangueira?</label>
+              </h3>
+              <div class="photo-upload">
+                <label>Foto da Mangueira</label>
+                <div class="photo-preview empty" id="preview-mangueira-${i}" onclick="triggerFileInput('mangueira-${i}')">
+                  📷 Clique para tirar foto
+                </div>
+                <input type="file" id="file-mangueira-${i}" class="file-input" accept="image/*" onchange="handlePhotoUpload('mangueira-${i}', ${i})">
+              </div>
+            </div>
+
+            <!-- TEM PISTOLA DE ABASTECIMENTO -->
+            <div class="item-section">
+              <h3>
+                <input type="checkbox" id="temPistola-${i}" onchange="toggleDependencia('pistolaDigital-${i}', this.checked)">
+                <label for="temPistola-${i}">Tem Pistola de Abastecimento?</label>
+              </h3>
+              <div class="photo-upload">
+                <label>Foto da Pistola</label>
+                <div class="photo-preview empty" id="preview-pistola-${i}" onclick="triggerFileInput('pistola-${i}')">
+                  📷 Clique para tirar foto
+                </div>
+                <input type="file" id="file-pistola-${i}" class="file-input" accept="image/*" onchange="handlePhotoUpload('pistola-${i}', ${i})">
+              </div>
+            </div>
+
+            <!-- PISTOLA DIGITAL FUNCIONANDO (Dependente) -->
+            <div class="item-section hidden" id="pistolaDigital-${i}">
+              <h3>
+                <input type="checkbox" id="temPistolaDigital-${i}">
+                <label for="temPistolaDigital-${i}">Digital da Pistola está Funcionando?</label>
+              </h3>
+              <div class="photo-upload">
+                <label>Foto do Digital da Pistola</label>
+                <div class="photo-preview empty" id="preview-pistola-digital-${i}" onclick="triggerFileInput('pistola-digital-${i}')">
+                  📷 Clique para tirar foto
+                </div>
+                <input type="file" id="file-pistola-digital-${i}" class="file-input" accept="image/*" onchange="handlePhotoUpload('pistola-digital-${i}', ${i})">
+              </div>
+            </div>
+
+            <!-- TEM BACIA DE CONTENÇÃO -->
+            <div class="item-section">
+              <h3>
+                <input type="checkbox" id="temBacia-${i}">
+                <label for="temBacia-${i}">Tem Bacia de Contenção?</label>
+              </h3>
+              <div class="photo-upload">
+                <label>Foto da Bacia de Contenção</label>
+                <div class="photo-preview empty" id="preview-bacia-${i}" onclick="triggerFileInput('bacia-${i}')">
+                  📷 Clique para tirar foto
+                </div>
+                <input type="file" id="file-bacia-${i}" class="file-input" accept="image/*" onchange="handlePhotoUpload('bacia-${i}', ${i})">
+              </div>
+            </div>
+
+            <!-- TEM LACRE DE SEGURANÇA -->
+            <div class="item-section">
+              <h3>
+                <input type="checkbox" id="temLacre-${i}">
+                <label for="temLacre-${i}">Tem Lacre de Segurança?</label>
+              </h3>
+              <div class="photo-upload">
+                <label>Foto do Lacre de Segurança</label>
+                <div class="photo-preview empty" id="preview-lacre-${i}" onclick="triggerFileInput('lacre-${i}')">
+                  📷 Clique para tirar foto
+                </div>
+                <input type="file" id="file-lacre-${i}" class="file-input" accept="image/*" onchange="handlePhotoUpload('lacre-${i}', ${i})">
+              </div>
+            </div>
+
+            <!-- INTERESSE EM CONTINUAR -->
+            <div class="item-section">
+              <h3>
+                <input type="checkbox" id="temInteresse-${i}">
+                <label for="temInteresse-${i}">Cliente tem Interesse em Continuar Utilizando o Tanque Inteligente?</label>
+              </h3>
+              <div class="photo-upload">
+                <label>Foto do Cliente/Assinatura</label>
+                <div class="photo-preview empty" id="preview-interesse-${i}" onclick="triggerFileInput('interesse-${i}')">
+                  📷 Clique para tirar foto
+                </div>
+                <input type="file" id="file-interesse-${i}" class="file-input" accept="image/*" onchange="handlePhotoUpload('interesse-${i}', ${i})">
+              </div>
+            </div>
+
+            <!-- OBSERVAÇÕES -->
             <div class="form-group">
-              <label for="observacoes-${i}">Observações</label>
+              <label for="observacoes-${i}">Observações Gerais do Tanque ${i}</label>
               <textarea id="observacoes-${i}" name="observacoes-${i}" rows="3" placeholder="Adicione observações sobre o tanque..."></textarea>
             </div>
           </div>
         `;
       }
+    }
 
-      atualizarProgressBar();
+    // Alternar visibilidade de dependências
+    function toggleDependencia(elementId, mostrar) {
+      const elemento = document.getElementById(elementId);
+      if (elemento) {
+        if (mostrar) {
+          elemento.classList.remove('hidden');
+        } else {
+          elemento.classList.add('hidden');
+        }
+      }
     }
 
     // Ativar input de arquivo
-    function triggerFileInput(tanqueNum) {
-      document.getElementById(`file-${tanqueNum}`).click();
+    function triggerFileInput(itemId) {
+      document.getElementById(`file-${itemId}`).click();
     }
 
     // Lidar com upload de foto
-    async function handlePhotoUpload(tanqueNum) {
-      const fileInput = document.getElementById(`file-${tanqueNum}`);
+    async function handlePhotoUpload(itemId, tanqueNum) {
+      const fileInput = document.getElementById(`file-${itemId}`);
       const file = fileInput.files[0];
 
       if (!file) return;
@@ -454,23 +570,19 @@
         if (!response.ok) throw new Error('Erro ao fazer upload');
 
         const data = await response.json();
-        tanquesFotos[tanqueNum] = data.fotoUrl;
+        
+        // Armazenar URL da foto
+        if (!itensData[tanqueNum]) itensData[tanqueNum] = {};
+        itensData[tanqueNum][itemId] = data.fotoUrl;
 
-        const preview = document.getElementById(`preview-${tanqueNum}`);
-        preview.innerHTML = `<img src="${data.fotoUrl}" alt="Foto do Tanque ${tanqueNum}">`;
+        const preview = document.getElementById(`preview-${itemId}`);
+        preview.innerHTML = `<img src="${data.fotoUrl}" alt="Foto de ${itemId}">`;
         preview.classList.remove('empty');
 
-        showMessage(`Foto do Tanque ${tanqueNum} enviada com sucesso`, 'success');
+        showMessage(`Foto de ${itemId} enviada com sucesso`, 'success');
       } catch (err) {
         showMessage(`Erro ao enviar foto: ${err.message}`, 'error');
       }
-    }
-
-    // Atualizar barra de progresso
-    function atualizarProgressBar() {
-      const preenchidos = Object.keys(tanquesFotos).length;
-      const percentual = (preenchidos / quantidadeTanques) * 100;
-      document.getElementById('progressFill').style.width = percentual + '%';
     }
 
     // Mostrar mensagem
@@ -488,30 +600,51 @@
 
       try {
         for (let i = 1; i <= quantidadeTanques; i++) {
-          const tanque = {
-            cliente_id: clienteId,
-            numero_tanque: i,
-            foto_url: tanquesFotos[i] || null,
-            capacidade_litros: parseInt(document.getElementById(`capacidade-${i}`).value),
-            condicao_plastico: document.getElementById(`condicao-${i}`).value,
-            tem_propulsora: document.getElementById(`propulsora-${i}`).checked ? 1 : 0,
-            propulsora_lacre: document.getElementById(`propulsora-lacre-${i}`).checked ? 1 : 0,
-            tem_mangueira: document.getElementById(`mangueira-${i}`).checked ? 1 : 0,
-            tem_pistola: document.getElementById(`pistola-${i}`).checked ? 1 : 0,
-            pistola_digital_funcionando: document.getElementById(`pistola-digital-${i}`).checked ? 1 : 0,
-            tem_bacia_contencao: document.getElementById(`bacia-${i}`).checked ? 1 : 0,
-            tem_lacre_seguranca: document.getElementById(`lacre-seguranca-${i}`).checked ? 1 : 0,
-            interesse_continuar: document.getElementById(`interesse-${i}`).checked ? 1 : 0,
-            observacoes: document.getElementById(`observacoes-${i}`).value
-          };
-
-          const response = await fetch(`${API_BASE}/tanques`, {
+          // Criar tanque
+          const tanqueResponse = await fetch(`${API_BASE}/tanques`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(tanque)
+            body: JSON.stringify({
+              cliente_id: clienteId,
+              numero_tanque: i,
+              capacidade_litros: parseInt(document.getElementById(`capacidade-${i}`).value),
+              condicao_plastico: document.getElementById(`condicao-${i}`).value
+            })
           });
 
-          if (!response.ok) throw new Error(`Erro ao salvar tanque ${i}`);
+          if (!tanqueResponse.ok) throw new Error(`Erro ao salvar tanque ${i}`);
+          const tanque = await tanqueResponse.json();
+
+          // Criar itens do tanque
+          const itens = [
+            { tipo: 'propulsora', checkbox: `temPropulsora-${i}`, foto: `propulsora-${i}` },
+            { tipo: 'propulsora_lacre', checkbox: `temPropulsoraLacre-${i}`, foto: `propulsora-lacre-${i}` },
+            { tipo: 'mangueira', checkbox: `temMangueira-${i}`, foto: `mangueira-${i}` },
+            { tipo: 'pistola', checkbox: `temPistola-${i}`, foto: `pistola-${i}` },
+            { tipo: 'pistola_digital', checkbox: `temPistolaDigital-${i}`, foto: `pistola-digital-${i}` },
+            { tipo: 'bacia_contencao', checkbox: `temBacia-${i}`, foto: `bacia-${i}` },
+            { tipo: 'lacre_seguranca', checkbox: `temLacre-${i}`, foto: `lacre-${i}` },
+            { tipo: 'interesse_continuar', checkbox: `temInteresse-${i}`, foto: `interesse-${i}` }
+          ];
+
+          for (const item of itens) {
+            const checkbox = document.getElementById(item.checkbox);
+            if (checkbox) {
+              const fotoUrl = itensData[i] && itensData[i][item.foto] ? itensData[i][item.foto] : null;
+              
+              await fetch(`${API_BASE}/itens`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  tanque_id: tanque.id,
+                  tipo_item: item.tipo,
+                  foto_url: fotoUrl,
+                  resposta_sim_nao: checkbox.checked ? 1 : 0,
+                  observacoes: document.getElementById(`observacoes-${i}`).value
+                })
+              });
+            }
+          }
         }
 
         showMessage('Todos os tanques foram salvos com sucesso!', 'success');

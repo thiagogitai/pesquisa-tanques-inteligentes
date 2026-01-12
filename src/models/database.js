@@ -32,20 +32,25 @@ function initializeDatabase() {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         cliente_id INTEGER NOT NULL,
         numero_tanque INTEGER NOT NULL,
-        foto_url TEXT,
         capacidade_litros INTEGER,
         condicao_plastico TEXT,
-        tem_propulsora INTEGER,
-        propulsora_lacre INTEGER,
-        tem_mangueira INTEGER,
-        tem_pistola INTEGER,
-        pistola_digital_funcionando INTEGER,
-        tem_bacia_contencao INTEGER,
-        tem_lacre_seguranca INTEGER,
-        interesse_continuar INTEGER,
-        observacoes TEXT,
         data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE CASCADE
+      )
+    `);
+
+    // Tabela de itens do tanque (cada pergunta/item com sua foto)
+    db.run(`
+      CREATE TABLE IF NOT EXISTS itens_tanque (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        tanque_id INTEGER NOT NULL,
+        tipo_item TEXT NOT NULL,
+        foto_url TEXT,
+        resposta_sim_nao INTEGER,
+        resposta_texto TEXT,
+        observacoes TEXT,
+        data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (tanque_id) REFERENCES tanques(id) ON DELETE CASCADE
       )
     `);
 

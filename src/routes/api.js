@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const clientesController = require('../controllers/clientesController');
 const tanquesController = require('../controllers/tanquesController');
+const itensController = require('../controllers/itensController');
 const uploadController = require('../controllers/uploadController');
 
 const router = express.Router();
@@ -31,6 +32,12 @@ router.get('/clientes/:cliente_id/tanques', tanquesController.getTanquesByClient
 router.post('/tanques', tanquesController.createTanque);
 router.put('/tanques/:id', tanquesController.updateTanque);
 router.delete('/tanques/:id', tanquesController.deleteTanque);
+
+// Rotas de Itens de Tanque
+router.get('/tanques/:tanque_id/itens', itensController.getItensByTanque);
+router.post('/itens', itensController.createItem);
+router.put('/itens/:id', itensController.updateItem);
+router.delete('/itens/:id', itensController.deleteItem);
 
 // Rotas de Upload
 router.post('/upload', upload.single('foto'), uploadController.uploadFoto);
