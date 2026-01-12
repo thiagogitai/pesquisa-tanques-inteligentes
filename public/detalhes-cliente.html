@@ -154,6 +154,53 @@
       gap: 15px;
     }
 
+    .itens-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .item-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 10px;
+    }
+
+    .item-card h4 {
+      font-size: 12px;
+      color: #667eea;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .item-status {
+      font-size: 13px;
+      margin-bottom: 8px;
+      color: #666;
+    }
+
+    .item-photo {
+      width: 100%;
+      height: 120px;
+      background: #e0e0e0;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-size: 12px;
+      color: #999;
+    }
+
+    .item-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     .detail-item {
       display: flex;
       align-items: center;
@@ -177,6 +224,16 @@
     }
 
     .detail-value.nao {
+      color: #dc2626;
+      font-weight: 600;
+    }
+
+    .item-status.sim {
+      color: #059669;
+      font-weight: 600;
+    }
+
+    .item-status.nao {
       color: #dc2626;
       font-weight: 600;
     }
@@ -328,6 +385,15 @@
     const token = localStorage.getItem('token');
     const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
     const isAdmin = usuario.role === 'admin';
+    const ITENS_DETALHES = [
+      { tipo: 'propulsora', label: 'Propulsora' },
+      { tipo: 'propulsora_lacre', label: 'Lacre Propulsora' },
+      { tipo: 'mangueira', label: 'Mangueira' },
+      { tipo: 'pistola', label: 'Pistola' },
+      { tipo: 'pistola_digital', label: 'Pistola Digital' },
+      { tipo: 'bacia_contencao', label: 'Bacia Contencao' },
+      { tipo: 'lacre_seguranca', label: 'Lacre Seguranca' }
+    ];
 
     // Obter parâmetro da URL
     function getQueryParam(param) {
@@ -388,13 +454,59 @@
         if (!tanquesResponse.ok) throw new Error('Erro ao carregar tanques');
 
         const tanques = await tanquesResponse.json();
-        exibirTanques(tanques);
+        const tanquesComItens = await carregarItensPorTanque(tanques);
+        exibirTanques(tanquesComItens);
       } catch (err) {
         showMessage(`Erro ao carregar dados: ${err.message}`, 'error');
       }
     }
 
     // Exibir informações do cliente
+    async function carregarItensPorTanque(tanques) {
+      const resultados = await Promise.all(
+        tanques.map(async (tanque) => {
+          try {
+            const itensResponse = await fetch(`${API_BASE}/tanques/${tanque.id}/itens`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!itensResponse.ok) throw new Error('Erro ao carregar itens');
+            const itens = await itensResponse.json();
+            return { ...tanque, itens };
+          } catch (err) {
+            return { ...tanque, itens: [] };
+          }
+        })
+      );
+
+      return resultados;
+    }
+
+    function mapItensPorTipo(itens = []) {
+      const map = {};
+      itens.forEach((item) => {
+        if (item && item.tipo_item) {
+          map[item.tipo_item] = item;
+        }
+      });
+      return map;
+    }
+
+    function normalizeSimNao(valor) {
+      if (valor === 0 || valor === 1) return valor;
+      if (valor === '0' || valor === '1') return Number(valor);
+      return null;
+    }
+
+    function formatSimNao(valor, fallback) {
+      const normalized = normalizeSimNao(valor);
+      const fallbackNormalized = normalizeSimNao(fallback);
+      const finalValue = normalized !== null ? normalized : fallbackNormalized;
+
+      if (finalValue === 1) return { text: 'Sim', className: 'sim' };
+      if (finalValue === 0) return { text: 'Nao', className: 'nao' };
+      return { text: 'N/A', className: '' };
+    }
+
     function exibirClienteInfo(cliente) {
       const data = new Date(cliente.data_atualizacao).toLocaleDateString('pt-BR');
       document.getElementById('dataAtualizacao').textContent = `Atualizado em: ${data}`;
@@ -449,6 +561,32 @@
       let html = '<div class="tanques-container"><h2>Tanques Cadastrados</h2>';
 
       tanques.forEach(tanque => {
+        const itensMap = mapItensPorTipo(tanque.itens || []);
+        const propulsora = formatSimNao(itensMap.propulsora?.resposta_sim_nao, tanque.tem_propulsora);
+        const propulsoraLacre = formatSimNao(itensMap.propulsora_lacre?.resposta_sim_nao, tanque.propulsora_lacre);
+        const mangueira = formatSimNao(itensMap.mangueira?.resposta_sim_nao, tanque.tem_mangueira);
+        const pistola = formatSimNao(itensMap.pistola?.resposta_sim_nao, tanque.tem_pistola);
+        const pistolaDigital = formatSimNao(itensMap.pistola_digital?.resposta_sim_nao, tanque.pistola_digital_funcionando);
+        const baciaContencao = formatSimNao(itensMap.bacia_contencao?.resposta_sim_nao, tanque.tem_bacia_contencao);
+        const lacreSeguranca = formatSimNao(itensMap.lacre_seguranca?.resposta_sim_nao, tanque.tem_lacre_seguranca);
+        const capacidade = tanque.capacidade_litros ? `${tanque.capacidade_litros} L` : 'N/A';
+
+        const itensHtml = ITENS_DETALHES.map((def) => {
+          const item = itensMap[def.tipo];
+          const resposta = formatSimNao(item?.resposta_sim_nao);
+          const statusClass = resposta.className ? `item-status ${resposta.className}` : 'item-status';
+          const fotoHtml = item?.foto_url
+            ? `<img src="${item.foto_url}" alt="Foto ${def.label}">`
+            : 'Sem foto';
+
+          return `
+            <div class="item-card">
+              <h4>${def.label}</h4>
+              <div class="${statusClass}">${resposta.text}</div>
+              <div class="item-photo">${fotoHtml}</div>
+            </div>
+          `;
+        }).join('');
         html += `
           <div class="tanque-card">
             <h3>Tanque ${tanque.numero_tanque}</h3>
@@ -459,68 +597,72 @@
               </div>
             ` : '<div class="tanque-foto empty">Sem foto</div>'}
 
-            <div class="tanque-details">
+                        <div class="tanque-details">
               <div class="detail-item">
                 <strong>Capacidade:</strong>
-                <span class="detail-value">${tanque.capacidade_litros} L</span>
+                <span class="detail-value">${capacidade}</span>
               </div>
               <div class="detail-item">
-                <strong>Condição:</strong>
+                <strong>Condicao:</strong>
                 <span class="detail-value">${tanque.condicao_plastico}</span>
               </div>
               <div class="detail-item">
                 <strong>Propulsora:</strong>
-                <span class="detail-value ${tanque.tem_propulsora ? 'sim' : 'nao'}">
-                  ${tanque.tem_propulsora ? 'Sim' : 'Não'}
+                <span class="detail-value ${propulsora.className}">
+                  ${propulsora.text}
                 </span>
               </div>
               <div class="detail-item">
                 <strong>Lacre Propulsora:</strong>
-                <span class="detail-value ${tanque.propulsora_lacre ? 'sim' : 'nao'}">
-                  ${tanque.propulsora_lacre ? 'Sim' : 'Não'}
+                <span class="detail-value ${propulsoraLacre.className}">
+                  ${propulsoraLacre.text}
                 </span>
               </div>
               <div class="detail-item">
                 <strong>Mangueira:</strong>
-                <span class="detail-value ${tanque.tem_mangueira ? 'sim' : 'nao'}">
-                  ${tanque.tem_mangueira ? 'Sim' : 'Não'}
+                <span class="detail-value ${mangueira.className}">
+                  ${mangueira.text}
                 </span>
               </div>
               <div class="detail-item">
                 <strong>Pistola:</strong>
-                <span class="detail-value ${tanque.tem_pistola ? 'sim' : 'nao'}">
-                  ${tanque.tem_pistola ? 'Sim' : 'Não'}
+                <span class="detail-value ${pistola.className}">
+                  ${pistola.text}
                 </span>
               </div>
               <div class="detail-item">
                 <strong>Pistola Digital:</strong>
-                <span class="detail-value ${tanque.pistola_digital_funcionando ? 'sim' : 'nao'}">
-                  ${tanque.pistola_digital_funcionando ? 'Funcionando' : 'Não'}
+                <span class="detail-value ${pistolaDigital.className}">
+                  ${pistolaDigital.text}
                 </span>
               </div>
               <div class="detail-item">
-                <strong>Bacia Contenção:</strong>
-                <span class="detail-value ${tanque.tem_bacia_contencao ? 'sim' : 'nao'}">
-                  ${tanque.tem_bacia_contencao ? 'Sim' : 'Não'}
+                <strong>Bacia Contencao:</strong>
+                <span class="detail-value ${baciaContencao.className}">
+                  ${baciaContencao.text}
                 </span>
               </div>
               <div class="detail-item">
-                <strong>Lacre Segurança:</strong>
-                <span class="detail-value ${tanque.tem_lacre_seguranca ? 'sim' : 'nao'}">
-                  ${tanque.tem_lacre_seguranca ? 'Sim' : 'Não'}
+                <strong>Lacre Seguranca:</strong>
+                <span class="detail-value ${lacreSeguranca.className}">
+                  ${lacreSeguranca.text}
                 </span>
               </div>
               <div class="detail-item">
                 <strong>Interesse Continuar:</strong>
                 <span class="detail-value ${tanque.interesse_continuar ? 'sim' : 'nao'}">
-                  ${tanque.interesse_continuar ? 'Sim' : 'Não'}
+                  ${tanque.interesse_continuar ? 'Sim' : 'Nao'}
                 </span>
               </div>
             </div>
 
+            <div class="itens-grid">
+              ${itensHtml}
+            </div>
+
             ${tanque.observacoes ? `
               <div class="observacoes">
-                <strong>Observações:</strong><br>
+                <strong>Observacoes:</strong><br>
                 ${tanque.observacoes}
               </div>
             ` : ''}
@@ -592,3 +734,6 @@
   </script>
 </body>
 </html>
+
+
+
