@@ -13,6 +13,24 @@ const db = new sqlite3.Database(dbPath, (err) => {
 
 function initializeDatabase() {
   db.serialize(() => {
+    function ensureTableColumns(tableName, columns) {
+      db.all(`PRAGMA table_info('${tableName}')`, [], (err, rows) => {
+        if (err) {
+          console.error(`Erro ao ler schema de ${tableName}:`, err);
+          return;
+        }
+
+        const existing = new Set((rows || []).map((r) => r.name));
+        columns.forEach(({ name, definition }) => {
+          if (existing.has(name)) return;
+          db.run(`ALTER TABLE ${tableName} ADD COLUMN ${name} ${definition}`, (alterErr) => {
+            if (alterErr) {
+              console.error(`Erro ao adicionar coluna ${tableName}.${name}:`, alterErr);
+            }
+          });
+        });
+      });
+    }
     // Tabela de usuários (vendedores e admin)
     db.run(`
       CREATE TABLE IF NOT EXISTS usuarios (
@@ -53,6 +71,16 @@ function initializeDatabase() {
         numero_tanque INTEGER NOT NULL,
         capacidade_litros INTEGER,
         condicao_plastico TEXT,
+        foto_url TEXT,
+        tem_propulsora INTEGER DEFAULT 0,
+        propulsora_lacre INTEGER DEFAULT 0,
+        tem_mangueira INTEGER DEFAULT 0,
+        tem_pistola INTEGER DEFAULT 0,
+        pistola_digital_funcionando INTEGER DEFAULT 0,
+        tem_bacia_contencao INTEGER DEFAULT 0,
+        tem_lacre_seguranca INTEGER DEFAULT 0,
+        interesse_continuar INTEGER DEFAULT 0,
+        observacoes TEXT,
         latitude REAL,
         longitude REAL,
         data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -76,6 +104,20 @@ function initializeDatabase() {
     `);
 
     console.log('Tabelas criadas/verificadas com sucesso');
+
+    // Garantir colunas esperadas pelos controllers mesmo em bancos antigos
+    ensureTableColumns('tanques', [
+      { name: 'foto_url', definition: 'TEXT' },
+      { name: 'tem_propulsora', definition: 'INTEGER DEFAULT 0' },
+      { name: 'propulsora_lacre', definition: 'INTEGER DEFAULT 0' },
+      { name: 'tem_mangueira', definition: 'INTEGER DEFAULT 0' },
+      { name: 'tem_pistola', definition: 'INTEGER DEFAULT 0' },
+      { name: 'pistola_digital_funcionando', definition: 'INTEGER DEFAULT 0' },
+      { name: 'tem_bacia_contencao', definition: 'INTEGER DEFAULT 0' },
+      { name: 'tem_lacre_seguranca', definition: 'INTEGER DEFAULT 0' },
+      { name: 'interesse_continuar', definition: 'INTEGER DEFAULT 0' },
+      { name: 'observacoes', definition: 'TEXT' }
+    ]);
 
     // Criar usuário admin padrão se não existir
     db.run(`

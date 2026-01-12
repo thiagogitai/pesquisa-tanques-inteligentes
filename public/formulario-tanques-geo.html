@@ -332,6 +332,10 @@
       margin-top: 15px;
     }
 
+    .photo-upload.hidden {
+      display: none;
+    }
+
     .photo-label {
       display: block;
       font-size: 12px;
@@ -537,6 +541,23 @@
     let localizacaoAtual = { latitude: null, longitude: null };
     const itensData = {};
 
+    const LOCALIZACAO_PIN_SVG = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="48" viewBox="0 0 32 48">
+        <path d="M16 47s13-16.2 13-29A13 13 0 1 0 3 18c0 12.8 13 29 13 29z" fill="#FF7A00" stroke="#0066CC" stroke-width="2"/>
+        <circle cx="16" cy="18" r="6.5" fill="#0066CC" opacity="0.95"/>
+        <circle cx="16" cy="18" r="3.2" fill="#ffffff" opacity="0.95"/>
+      </svg>
+    `.trim();
+
+    function getLocalizacaoPinIcon() {
+      return L.icon({
+        iconUrl: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(LOCALIZACAO_PIN_SVG)}`,
+        iconSize: [32, 48],
+        iconAnchor: [16, 48],
+        popupAnchor: [0, -44]
+      });
+    }
+
     function getQueryParam(param) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(param);
@@ -583,21 +604,14 @@
 
           mapa.setView([localizacaoAtual.latitude, localizacaoAtual.longitude], 15);
 
-          if (marcador) {
-            marcador.setLatLng([localizacaoAtual.latitude, localizacaoAtual.longitude]);
-          } else {
-            marcador = L.marker([localizacaoAtual.latitude, localizacaoAtual.longitude], {
-              icon: L.icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-ff6600.png',
-                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                shadowSize: [41, 41]
-              })
-            }).addTo(mapa);
-            marcador.bindPopup('📍 Localização Atual');
-          }
+            if (marcador) {
+              marcador.setLatLng([localizacaoAtual.latitude, localizacaoAtual.longitude]);
+            } else {
+              marcador = L.marker([localizacaoAtual.latitude, localizacaoAtual.longitude], {
+              icon: getLocalizacaoPinIcon()
+              }).addTo(mapa);
+            marcador.bindPopup('<strong style="color:#0066CC">Localização Atual</strong>');
+            }
 
           atualizarStatusGeo('✓ Localização capturada', 'success');
         },
@@ -671,17 +685,17 @@
                   <div class="sim-nao-group">
                     <div class="radio-option">
                       <input type="radio" id="temPropulsora-sim-${i}" name="temPropulsora-${i}" value="sim" 
-                        onchange="toggleDependencia('propulsoraLacre-${i}', this.checked)">
+                        onchange="toggleDependencia('propulsoraLacre-${i}', this.checked); toggleFoto('photo-propulsora-${i}', this.checked, ${i}, 'propulsora-${i}')">
                       <label for="temPropulsora-sim-${i}">Sim</label>
                     </div>
                     <div class="radio-option">
                       <input type="radio" id="temPropulsora-nao-${i}" name="temPropulsora-${i}" value="nao" 
-                        onchange="toggleDependencia('propulsoraLacre-${i}', false)">
+                        onchange="toggleDependencia('propulsoraLacre-${i}', false); toggleFoto('photo-propulsora-${i}', false, ${i}, 'propulsora-${i}'); toggleFoto('photo-propulsora-lacre-${i}', false, ${i}, 'propulsora-lacre-${i}')">
                       <label for="temPropulsora-nao-${i}">Não</label>
                     </div>
                   </div>
                 </div>
-                <div class="photo-upload">
+                <div class="photo-upload hidden" id="photo-propulsora-${i}">
                   <label class="photo-label">📸 Foto da Propulsora</label>
                   <div class="photo-preview empty" id="preview-propulsora-${i}" onclick="triggerFileInput('propulsora-${i}')">
                     <div class="camera-icon">📷</div>
@@ -700,16 +714,18 @@
                   </div>
                   <div class="sim-nao-group">
                     <div class="radio-option">
-                      <input type="radio" id="temPropulsoraLacre-sim-${i}" name="temPropulsoraLacre-${i}" value="sim">
+                      <input type="radio" id="temPropulsoraLacre-sim-${i}" name="temPropulsoraLacre-${i}" value="sim"
+                        onchange="toggleFoto('photo-propulsora-lacre-${i}', this.checked, ${i}, 'propulsora-lacre-${i}')">
                       <label for="temPropulsoraLacre-sim-${i}">Sim</label>
                     </div>
                     <div class="radio-option">
-                      <input type="radio" id="temPropulsoraLacre-nao-${i}" name="temPropulsoraLacre-${i}" value="nao">
+                      <input type="radio" id="temPropulsoraLacre-nao-${i}" name="temPropulsoraLacre-${i}" value="nao"
+                        onchange="toggleFoto('photo-propulsora-lacre-${i}', false, ${i}, 'propulsora-lacre-${i}')">
                       <label for="temPropulsoraLacre-nao-${i}">Não</label>
                     </div>
                   </div>
                 </div>
-                <div class="photo-upload">
+                <div class="photo-upload hidden" id="photo-propulsora-lacre-${i}">
                   <label class="photo-label">📸 Foto do Lacre da Propulsora</label>
                   <div class="photo-preview empty" id="preview-propulsora-lacre-${i}" onclick="triggerFileInput('propulsora-lacre-${i}')">
                     <div class="camera-icon">📷</div>
@@ -727,16 +743,18 @@
                   </div>
                   <div class="sim-nao-group">
                     <div class="radio-option">
-                      <input type="radio" id="temMangueira-sim-${i}" name="temMangueira-${i}" value="sim">
+                      <input type="radio" id="temMangueira-sim-${i}" name="temMangueira-${i}" value="sim"
+                        onchange="toggleFoto('photo-mangueira-${i}', this.checked, ${i}, 'mangueira-${i}')">
                       <label for="temMangueira-sim-${i}">Sim</label>
                     </div>
                     <div class="radio-option">
-                      <input type="radio" id="temMangueira-nao-${i}" name="temMangueira-${i}" value="nao">
+                      <input type="radio" id="temMangueira-nao-${i}" name="temMangueira-${i}" value="nao"
+                        onchange="toggleFoto('photo-mangueira-${i}', false, ${i}, 'mangueira-${i}')">
                       <label for="temMangueira-nao-${i}">Não</label>
                     </div>
                   </div>
                 </div>
-                <div class="photo-upload">
+                <div class="photo-upload hidden" id="photo-mangueira-${i}">
                   <label class="photo-label">📸 Foto da Mangueira</label>
                   <div class="photo-preview empty" id="preview-mangueira-${i}" onclick="triggerFileInput('mangueira-${i}')">
                     <div class="camera-icon">📷</div>
@@ -755,17 +773,17 @@
                   <div class="sim-nao-group">
                     <div class="radio-option">
                       <input type="radio" id="temPistola-sim-${i}" name="temPistola-${i}" value="sim" 
-                        onchange="toggleDependencia('pistolaDigital-${i}', this.checked)">
+                        onchange="toggleDependencia('pistolaDigital-${i}', this.checked); toggleFoto('photo-pistola-${i}', this.checked, ${i}, 'pistola-${i}')">
                       <label for="temPistola-sim-${i}">Sim</label>
                     </div>
                     <div class="radio-option">
                       <input type="radio" id="temPistola-nao-${i}" name="temPistola-${i}" value="nao" 
-                        onchange="toggleDependencia('pistolaDigital-${i}', false)">
+                        onchange="toggleDependencia('pistolaDigital-${i}', false); toggleFoto('photo-pistola-${i}', false, ${i}, 'pistola-${i}'); toggleFoto('photo-pistola-digital-${i}', false, ${i}, 'pistola-digital-${i}')">
                       <label for="temPistola-nao-${i}">Não</label>
                     </div>
                   </div>
                 </div>
-                <div class="photo-upload">
+                <div class="photo-upload hidden" id="photo-pistola-${i}">
                   <label class="photo-label">📸 Foto da Pistola</label>
                   <div class="photo-preview empty" id="preview-pistola-${i}" onclick="triggerFileInput('pistola-${i}')">
                     <div class="camera-icon">📷</div>
@@ -784,16 +802,18 @@
                   </div>
                   <div class="sim-nao-group">
                     <div class="radio-option">
-                      <input type="radio" id="temPistolaDigital-sim-${i}" name="temPistolaDigital-${i}" value="sim">
+                      <input type="radio" id="temPistolaDigital-sim-${i}" name="temPistolaDigital-${i}" value="sim"
+                        onchange="toggleFoto('photo-pistola-digital-${i}', this.checked, ${i}, 'pistola-digital-${i}')">
                       <label for="temPistolaDigital-sim-${i}">Sim</label>
                     </div>
                     <div class="radio-option">
-                      <input type="radio" id="temPistolaDigital-nao-${i}" name="temPistolaDigital-${i}" value="nao">
+                      <input type="radio" id="temPistolaDigital-nao-${i}" name="temPistolaDigital-${i}" value="nao"
+                        onchange="toggleFoto('photo-pistola-digital-${i}', false, ${i}, 'pistola-digital-${i}')">
                       <label for="temPistolaDigital-nao-${i}">Não</label>
                     </div>
                   </div>
                 </div>
-                <div class="photo-upload">
+                <div class="photo-upload hidden" id="photo-pistola-digital-${i}">
                   <label class="photo-label">📸 Foto do Digital da Pistola</label>
                   <div class="photo-preview empty" id="preview-pistola-digital-${i}" onclick="triggerFileInput('pistola-digital-${i}')">
                     <div class="camera-icon">📷</div>
@@ -811,16 +831,18 @@
                   </div>
                   <div class="sim-nao-group">
                     <div class="radio-option">
-                      <input type="radio" id="temBacia-sim-${i}" name="temBacia-${i}" value="sim">
+                      <input type="radio" id="temBacia-sim-${i}" name="temBacia-${i}" value="sim"
+                        onchange="toggleFoto('photo-bacia-${i}', this.checked, ${i}, 'bacia-${i}')">
                       <label for="temBacia-sim-${i}">Sim</label>
                     </div>
                     <div class="radio-option">
-                      <input type="radio" id="temBacia-nao-${i}" name="temBacia-${i}" value="nao">
+                      <input type="radio" id="temBacia-nao-${i}" name="temBacia-${i}" value="nao"
+                        onchange="toggleFoto('photo-bacia-${i}', false, ${i}, 'bacia-${i}')">
                       <label for="temBacia-nao-${i}">Não</label>
                     </div>
                   </div>
                 </div>
-                <div class="photo-upload">
+                <div class="photo-upload hidden" id="photo-bacia-${i}">
                   <label class="photo-label">📸 Foto da Bacia de Contenção</label>
                   <div class="photo-preview empty" id="preview-bacia-${i}" onclick="triggerFileInput('bacia-${i}')">
                     <div class="camera-icon">📷</div>
@@ -838,16 +860,18 @@
                   </div>
                   <div class="sim-nao-group">
                     <div class="radio-option">
-                      <input type="radio" id="temLacre-sim-${i}" name="temLacre-${i}" value="sim">
+                      <input type="radio" id="temLacre-sim-${i}" name="temLacre-${i}" value="sim"
+                        onchange="toggleFoto('photo-lacre-${i}', this.checked, ${i}, 'lacre-${i}')">
                       <label for="temLacre-sim-${i}">Sim</label>
                     </div>
                     <div class="radio-option">
-                      <input type="radio" id="temLacre-nao-${i}" name="temLacre-${i}" value="nao">
+                      <input type="radio" id="temLacre-nao-${i}" name="temLacre-${i}" value="nao"
+                        onchange="toggleFoto('photo-lacre-${i}', false, ${i}, 'lacre-${i}')">
                       <label for="temLacre-nao-${i}">Não</label>
                     </div>
                   </div>
                 </div>
-                <div class="photo-upload">
+                <div class="photo-upload hidden" id="photo-lacre-${i}">
                   <label class="photo-label">📸 Foto do Lacre de Segurança</label>
                   <div class="photo-preview empty" id="preview-lacre-${i}" onclick="triggerFileInput('lacre-${i}')">
                     <div class="camera-icon">📷</div>
@@ -871,6 +895,32 @@
           elemento.classList.add('hidden');
         }
       }
+    }
+
+    function toggleFoto(containerId, mostrar, tanqueNum, itemId) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      if (mostrar) {
+        container.classList.remove('hidden');
+        return;
+      }
+
+      container.classList.add('hidden');
+
+      // Limpar estado/preview se esconder
+      if (itensData[tanqueNum] && itensData[tanqueNum][itemId]) {
+        delete itensData[tanqueNum][itemId];
+      }
+
+      const preview = document.getElementById(`preview-${itemId}`);
+      if (preview) {
+        preview.innerHTML = '<div class="camera-icon">📷</div><div>Clique para tirar foto</div>';
+        preview.classList.add('empty');
+      }
+
+      const fileInput = document.getElementById(`file-${itemId}`);
+      if (fileInput) fileInput.value = '';
     }
 
     function triggerFileInput(itemId) {

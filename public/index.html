@@ -445,11 +445,37 @@
     const API_BASE = '/api';
 
     // Verificar autenticação
-    window.addEventListener('load', () => {
+    window.addEventListener('load', async () => {
       const token = localStorage.getItem('token');
       const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
 
       if (!token) {
+        window.location.href = '/login-email.html';
+        return;
+      }
+
+      // Token antigo (sem id) ou inv lido: for‡ar novo login
+      if (!usuario.id) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+        window.location.href = '/login-email.html';
+        return;
+      }
+
+      try {
+        const meResp = await fetch(`${API_BASE}/auth/me`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!meResp.ok) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('usuario');
+          window.location.href = '/login-email.html';
+          return;
+        }
+      } catch {
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
         window.location.href = '/login-email.html';
         return;
       }
@@ -504,6 +530,13 @@
           },
           body: JSON.stringify(dados)
         });
+
+        if (response.status === 401 || response.status === 403) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('usuario');
+          window.location.href = '/login-email.html';
+          return;
+        }
 
         if (!response.ok) throw new Error('Erro ao criar cliente');
 

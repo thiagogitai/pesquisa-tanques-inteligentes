@@ -325,6 +325,9 @@
   <script>
     const API_BASE = '/api';
     let clienteId = null;
+    const token = localStorage.getItem('token');
+    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    const isAdmin = usuario.role === 'admin';
 
     // Obter parâmetro da URL
     function getQueryParam(param) {
@@ -335,6 +338,18 @@
     // Inicializar página
     function inicializar() {
       clienteId = getQueryParam('id');
+
+      if (!token) {
+        window.location.href = '/login-email.html';
+        return;
+      }
+
+      if (!usuario.id) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+        window.location.href = '/login-email.html';
+        return;
+      }
 
       if (!clienteId) {
         window.location.href = '/';
@@ -347,13 +362,29 @@
     // Carregar dados do cliente e tanques
     async function carregarDados() {
       try {
-        const clienteResponse = await fetch(`${API_BASE}/clientes/${clienteId}`);
+        const clienteResponse = await fetch(`${API_BASE}/clientes/${clienteId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (clienteResponse.status === 401 || clienteResponse.status === 403) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('usuario');
+          window.location.href = '/login-email.html';
+          return;
+        }
         if (!clienteResponse.ok) throw new Error('Cliente não encontrado');
 
         const cliente = await clienteResponse.json();
         exibirClienteInfo(cliente);
 
-        const tanquesResponse = await fetch(`${API_BASE}/clientes/${clienteId}/tanques`);
+        const tanquesResponse = await fetch(`${API_BASE}/clientes/${clienteId}/tanques`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (tanquesResponse.status === 401 || tanquesResponse.status === 403) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('usuario');
+          window.location.href = '/login-email.html';
+          return;
+        }
         if (!tanquesResponse.ok) throw new Error('Erro ao carregar tanques');
 
         const tanques = await tanquesResponse.json();
@@ -490,10 +521,12 @@
               </div>
             ` : ''}
 
-            <div style="margin-top: 15px; display: flex; gap: 10px;">
-              <button type="button" class="secondary" onclick="editarTanque(${tanque.id})">✏️ Editar</button>
-              <button type="button" class="danger" onclick="deletarTanque(${tanque.id})">🗑️ Deletar</button>
-            </div>
+            ${isAdmin ? `
+              <div style="margin-top: 15px; display: flex; gap: 10px;">
+                <button type="button" class="secondary" onclick="editarTanque(${tanque.id})">✏️ Editar</button>
+                <button type="button" class="danger" onclick="deletarTanque(${tanque.id})">🗑️ Deletar</button>
+              </div>
+            ` : ''}
           </div>
         `;
       });
@@ -513,11 +546,17 @@
 
     // Deletar tanque
     async function deletarTanque(tanqueId) {
+      if (!isAdmin) {
+        showMessage('Acesso negado. Apenas administradores podem deletar.', 'error');
+        return;
+      }
+
       if (!confirm('Tem certeza que deseja deletar este tanque?')) return;
 
       try {
         const response = await fetch(`${API_BASE}/tanques/${tanqueId}`, {
-          method: 'DELETE'
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
         });
 
         if (!response.ok) throw new Error('Erro ao deletar tanque');

@@ -30,24 +30,24 @@ const upload = multer({
 router.get('/clientes', authController.autenticar, clientesController.getAllClientes);
 router.get('/clientes/:id', authController.autenticar, clientesController.getClienteById);
 router.post('/clientes', authController.autenticar, clientesController.createCliente);
-router.put('/clientes/:id', authController.autenticar, clientesController.updateCliente);
+router.put('/clientes/:id', authController.autenticar, authController.verificarAdmin, clientesController.updateCliente);
 router.delete('/clientes/:id', authController.autenticar, authController.verificarAdmin, clientesController.deleteCliente);
 
 // Rotas de Tanques
 router.get('/clientes/:cliente_id/tanques', tanquesController.getTanquesByCliente);
 router.post('/tanques', tanquesController.createTanque);
-router.put('/tanques/:id', tanquesController.updateTanque);
-router.delete('/tanques/:id', tanquesController.deleteTanque);
+router.put('/tanques/:id', authController.autenticar, authController.verificarAdmin, tanquesController.updateTanque);
+router.delete('/tanques/:id', authController.autenticar, authController.verificarAdmin, tanquesController.deleteTanque);
 
 // Rotas de Itens de Tanque
 router.get('/tanques/:tanque_id/itens', itensController.getItensByTanque);
 router.post('/itens', itensController.createItem);
-router.put('/itens/:id', itensController.updateItem);
-router.delete('/itens/:id', itensController.deleteItem);
+router.put('/itens/:id', authController.autenticar, authController.verificarAdmin, itensController.updateItem);
+router.delete('/itens/:id', authController.autenticar, authController.verificarAdmin, itensController.deleteItem);
 
 // Rotas de Upload
 router.post('/upload', upload.single('foto'), uploadController.uploadFoto);
-router.delete('/uploads/:filename', uploadController.deleteFoto);
+router.delete('/uploads/:filename', authController.autenticar, authController.verificarAdmin, uploadController.deleteFoto);
 
 // Rotas de Relatórios (apenas admin)
 const relatoriosController = require('../controllers/relatoriosController');
